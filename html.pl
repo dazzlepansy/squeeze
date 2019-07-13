@@ -61,13 +61,26 @@ article(Entry, Title, Subtitle, Date) -->
 	article_close,
 	{ [First|_] = Entry,  char_code('<', First) }.
 
+% An article without a title, subtitle, or metadata.
 article_header(null, null, null) --> [].
 
+% An article without a subtitle or metadata.
+article_header(Title, null, null) -->
+	article_title(Title).
+
+% An article without a subtitle.
 article_header(Title, null, Date) -->
 	article_title(Title),
 	whitespace,
 	article_meta(Date).
 
+% An article without metadata.
+article_header(Title, Subtitle, null) -->
+	article_title(Title),
+	whitespace,
+	article_subtitle(Subtitle).
+
+% An article with all header components.
 article_header(Title, Subtitle, Date) -->
 	article_title(Title),
 	whitespace,
@@ -107,7 +120,7 @@ title(null) -->
 
 title(Title) -->
 	"<title>",
-	Title,
+	anything(Title),
 	"</title>".
 
 title(_) -->

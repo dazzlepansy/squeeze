@@ -17,12 +17,7 @@ files_to_articles([Filename|Filenames], [article(Date, Title, Link, Description)
 	read_file(Stream, Markdown),
 	close(Stream),
 	% Grab the link.
-	atom_codes(Filename, FilenameCodes),
-	site_url(URL, []),
-	append(_, "/source", StartPath),
-	append(StartPath, Path, FilenameCodes),
-	append(PathWithoutFile, "index.md", Path),
-	append(URL, PathWithoutFile, Link),
+	get_link(Filename, Link),
 	% Extract the title, entry, etc. from the Markdown.
 	markdown(Entry, Title, _, Date, Markdown, []),
 	% XML escape the description.
@@ -30,6 +25,26 @@ files_to_articles([Filename|Filenames], [article(Date, Title, Link, Description)
 	replace("<", "&lt;", EntryAmp, EntryLT),
 	replace(">", "&gt;", EntryLT, Description),
 	files_to_articles(Filenames, Articles).
+
+get_link(Filename, Link):-
+	atom_codes(Filename, FilenameCodes),
+	% Just assert that this is an index file before we go further.
+	% Backtracking after this point will take us down a rabbit hole.
+	append(_, "index.md", FilenameCodes),
+	site_url(URL, []),
+	append(_, "/source", StartPath),
+	append(StartPath, Path, FilenameCodes),
+	append(PathWithoutFile, "index.md", Path),
+	append(URL, PathWithoutFile, Link).
+
+get_link(Filename, Link):-
+	atom_codes(Filename, FilenameCodes),
+	site_url(URL, []),
+	append(_, "/source", StartPath),
+	append(StartPath, Path, FilenameCodes),
+	append(PathWithoutExtension, ".md", Path),
+	append(PathWithoutExtension, "/", PathWithSlash),
+	append(URL, PathWithSlash, Link).
 
 rss(BuildDate, Articles) -->
 	rss_open,

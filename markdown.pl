@@ -1,5 +1,14 @@
 % Markdown definition
 
+markdown(Entry, Title, Subtitle, Date) -->
+	metadata("Title", Title),
+	"\n",
+	metadata("Subtitle", Subtitle),
+	"\n",
+	metadata("Date", Date),
+	"\n\n",
+	anything(Entry).
+
 markdown(Entry, Title, null, Date) -->
 	metadata("Title", Title),
 	"\n",
@@ -7,12 +16,15 @@ markdown(Entry, Title, null, Date) -->
 	"\n\n",
 	anything(Entry).
 
-markdown(Entry, Title, Subtitle, Date) -->
+markdown(Entry, Title, Subtitle, null) -->
 	metadata("Title", Title),
 	"\n",
 	metadata("Subtitle", Subtitle),
-	"\n",
-	metadata("Date", Date),
+	"\n\n",
+	anything(Entry).
+
+markdown(Entry, Title, null, null) -->
+	metadata("Title", Title),
 	"\n\n",
 	anything(Entry).
 
