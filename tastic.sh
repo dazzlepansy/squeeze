@@ -45,10 +45,11 @@ then
 	# Parse and create all the HTML files.
 	find $SITE_PATH/$SOURCE_DIR -type f -name "*.md" -print0 |
 		while IFS= read -r -d '' file; do
+			echo $file
 			NEW_PATH=`echo "$file" | sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" | sed 's|.md$|.html|'`
 			cat "$file" |
 				swipl --traditional -q -l entries.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." |
-				tidy -quiet --indent auto --indent-with-tabs yes --wrap 0 -xml --tidy-mark no |
+				tidy -quiet --indent auto --indent-with-tabs yes --wrap 0 -asxml --tidy-mark no |
 				~/.local/bin/smartypants \
 				> "$NEW_PATH"
 		done
