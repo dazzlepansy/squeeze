@@ -1,3 +1,9 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: html.pl
+% Description: DCG definition of an HTML file.
+%	This is basically your static website's template.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 page(Entry, Title, Subtitle, Date) -->
 	doctype,
 	whitespace,

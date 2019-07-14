@@ -1,4 +1,9 @@
-% Markdown definition
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: markdown.pl
+% Description: DCG definition of a Markdown file.
+%	Markdown files may have no metadata at the start,
+%	or they may have a Title, Subtitle, and Date (all optional, but in that order).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 markdown(Entry, Title, Subtitle, Date) -->
 	metadata("Title", Title),

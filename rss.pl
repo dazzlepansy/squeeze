@@ -1,50 +1,7 @@
-:- include('helpers.pl').
-:- include('markdown.pl').
-
-generate_rss(BuildDate, Filenames):-
-	files_to_articles(Filenames, Articles),
-	sort(Articles, SortedArticles),
-	take_last(5, SortedArticles, TakenArticles),
-	rss(BuildDate, TakenArticles, RSSCodes, []),
-	atom_codes(RSS, RSSCodes),
-	write(RSS),
-	halt.
-
-files_to_articles([], []).
-
-files_to_articles([Filename|Filenames], [article(Date, Title, Link, Description)|Articles]):-
-	open(Filename, read, Stream),
-	read_file(Stream, Markdown),
-	close(Stream),
-	% Grab the link.
-	get_link(Filename, Link),
-	% Extract the title, entry, etc. from the Markdown.
-	markdown(Entry, Title, _, Date, Markdown, []),
-	% XML escape the description.
-	replace("&", "&amp;", Entry, EntryAmp),
-	replace("<", "&lt;", EntryAmp, EntryLT),
-	replace(">", "&gt;", EntryLT, Description),
-	files_to_articles(Filenames, Articles).
-
-get_link(Filename, Link):-
-	atom_codes(Filename, FilenameCodes),
-	% Just assert that this is an index file before we go further.
-	% Backtracking after this point will take us down a rabbit hole.
-	append(_, "index.md", FilenameCodes),
-	site_url(URL, []),
-	append(_, "/source", StartPath),
-	append(StartPath, Path, FilenameCodes),
-	append(PathWithoutFile, "index.md", Path),
-	append(URL, PathWithoutFile, Link).
-
-get_link(Filename, Link):-
-	atom_codes(Filename, FilenameCodes),
-	site_url(URL, []),
-	append(_, "/source", StartPath),
-	append(StartPath, Path, FilenameCodes),
-	append(PathWithoutExtension, ".md", Path),
-	append(PathWithoutExtension, "/", PathWithSlash),
-	append(URL, PathWithSlash, Link).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: rss.pl
+% Description: DCG definition of an RSS file.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 rss(BuildDate, Articles) -->
 	rss_open,
@@ -115,7 +72,7 @@ webmaster -->
 
 last_build_date(BuildDate) -->
 	"<lastBuildDate>",
-	BuildDate,
+	anything(BuildDate),
 	"</lastBuildDate>".
 
 items([]) --> [].
@@ -146,7 +103,7 @@ author -->
 
 pubdate(Date) -->
 	"<pubDate>",
-	Date,
+	anything(Date),
 	"</pubDate>".
 
 item_close --> "</item>".
