@@ -15,7 +15,7 @@ It's all reeeeeally alpha and is pretty closely tailored to my specific needs, b
 * Bash. Used to run the script that automates everything else.
 * A Prolog interpreter. Tested with [SWI-Prolog](https://www.swi-prolog.org/), but the syntax should be vanilla ISO Prolog and should work with any implementation.
 * [HTML Tidy](http://www.html-tidy.org/). Used to format the HTML output nicely — not something I relished doing in Prolog.
-* [Smartypants](https://github.com/leohemsted/smartypants.py) located at ~/.local/bin/smartypants. Used to smarten the punctuation in the HTML output.
+* [Smartypants](https://github.com/leohemsted/smartypants.py). Used to smarten the punctuation in the HTML output.
 
 ## Assumptions
 
@@ -35,9 +35,9 @@ site.pl contains DCG definitions of this site's specifics, such as title, author
 
 	site_url --> "https://www.example.com".
 
-	email --> "webmaster@example.com".
+	user_email --> "webmaster@example.com".
 
-	name --> "Harold Gruntfuttock".
+	user_name --> "Harold Gruntfuttock".
 
 ## Use
 

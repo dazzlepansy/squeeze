@@ -67,7 +67,7 @@ copyright -->
 
 webmaster -->
 	"<webMaster>",
-	email,
+	user_email,
 	"</webMaster>".
 
 last_build_date(BuildDate) -->
@@ -98,7 +98,7 @@ item_open --> "<item>".
 
 author -->
 	"<author>",
-	name,
+	user_name,
 	"</author>".
 
 pubdate(Date) -->

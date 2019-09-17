@@ -234,9 +234,9 @@ br --> "<br />".
 
 license_text -->
 	"Unless otherwise noted content on this website by <a href=\"mailto:",
-	email,
+	user_email,
 	"\">",
-	name,
+	user_name,
 	"</a> is licensed under a<br /><a rel=\"license\" href=\"http://creativecommons.org/licenses/by-nc-sa/3.0/\">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.".
 
 p_close --> "</p>".

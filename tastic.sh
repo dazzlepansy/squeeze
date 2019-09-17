@@ -49,8 +49,8 @@ then
 			NEW_PATH=`echo "$file" | sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" | sed 's|.md$|.html|'`
 			cat "$file" |
 				swipl --traditional -q -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." |
-				tidy -quiet --indent auto --indent-with-tabs yes --wrap 0 -asxml --tidy-mark no |
-				~/.local/bin/smartypants \
+				tidy5 -quiet --indent auto --indent-with-tabs yes --wrap 0 -asxml --tidy-mark no |
+				smartypants \
 				> "$NEW_PATH"
 		done
 
@@ -66,7 +66,7 @@ then
 	ARTICLES=`grep -Rl --include=\*.md "^Date: " "$SITE_PATH"/"$SOURCE_DIR" | paste -sd ',' - | sed "s|,|','|g"`
 	BUILD_DATE=`date +"%Y-%m-%d %T"`
 	swipl --traditional -q -l generate_rss.pl -g "consult('$SITE_PATH/site.pl'), generate_rss(\"$BUILD_DATE\", ['$ARTICLES'])." |
-		tidy -quiet --indent auto --indent-with-tabs yes --wrap 0 -xml --tidy-mark no \
+		tidy5 -quiet --indent auto --indent-with-tabs yes --wrap 0 -xml --tidy-mark no \
 		> "$SITE_PATH"/"$OUTPUT_DIR"/feeds/rss.xml
 else
 	echo "Invalid argument."
