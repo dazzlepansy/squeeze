@@ -51,18 +51,18 @@ get_link(Filename, Link):-
 	atom_codes(Filename, FilenameCodes),
 	% Just assert that this is an index file before we go further.
 	% Backtracking after this point will take us down a rabbit hole.
-	append(_, "index.md", FilenameCodes),
+	append_lists(_, "index.md", FilenameCodes),
 	site_url(URL, []),
-	append(_, "/source", StartPath),
-	append(StartPath, Path, FilenameCodes),
-	append(PathWithoutFile, "index.md", Path),
-	append(URL, PathWithoutFile, Link).
+	append_lists(_, "/source", StartPath),
+	append_lists(StartPath, Path, FilenameCodes),
+	append_lists(PathWithoutFile, "index.md", Path),
+	append_lists(URL, PathWithoutFile, Link).
 
 get_link(Filename, Link):-
 	atom_codes(Filename, FilenameCodes),
 	site_url(URL, []),
-	append(_, "/source", StartPath),
-	append(StartPath, Path, FilenameCodes),
-	append(PathWithoutExtension, ".md", Path),
-	append(PathWithoutExtension, "/", PathWithSlash),
-	append(URL, PathWithSlash, Link).
+	append_lists(_, "/source", StartPath),
+	append_lists(StartPath, Path, FilenameCodes),
+	append_lists(PathWithoutExtension, ".md", Path),
+	append_lists(PathWithoutExtension, "/", PathWithSlash),
+	append_lists(URL, PathWithSlash, Link).

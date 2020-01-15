@@ -34,12 +34,21 @@ take_append(_, Item, ResultSoFar, [Item|ResultSoFar]).
 replace(_, _, [], []).
 
 replace(FindCodes, ReplaceCodes, Haystack, Result):-
-	append(FindCodes, HaystackMinusMatch, Haystack),
+	append_lists(FindCodes, HaystackMinusMatch, Haystack),
 	replace(FindCodes, ReplaceCodes, HaystackMinusMatch, ReplacedHaystackMinusMatch),
-	append(ReplaceCodes, ReplacedHaystackMinusMatch, Result).
+	append_lists(ReplaceCodes, ReplacedHaystackMinusMatch, Result).
 
 replace(FindCodes, ReplaceCodes, [Code|Haystack], [Code|Result]):-
 	replace(FindCodes, ReplaceCodes, Haystack, Result).
+
+
+% append_lists(?List1, ?List2, ?Result).
+%   Append two lists.
+%   This is not an ISO predicate, so I've definded it here for portability.
+append_lists([], List2, List2).
+
+append_lists([First|List1], List2, [First|Result]):-
+	append_lists(List1, List2, Result).
 
 
 anything([]) --> [].
