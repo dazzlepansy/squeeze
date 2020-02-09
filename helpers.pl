@@ -58,8 +58,12 @@ anything([X|Rest]) --> [X], anything(Rest).
 
 whitespace --> [].
 
-whitespace --> "\n", whitespace.
+whitespace --> newline, whitespace.
 
-whitespace --> "\t", whitespace.
+whitespace --> tab, whitespace.
 
 whitespace --> " ", whitespace.
+
+newline --> "\n".
+
+tab --> "\t".

@@ -6,64 +6,64 @@
 
 page(Entry, Title, Subtitle, Date) -->
 	doctype,
-	whitespace,
+	newline,
 	html(Entry, Title, Subtitle, Date).
 
 html(Entry, Title, Subtitle, Date) -->
 	html_open,
-	whitespace,
+	newline,
 	head(Title),
-	whitespace,
+	newline,
 	body(Entry, Title, Subtitle, Date),
-	whitespace,
+	newline,
 	html_close.
 
 head(Title) -->
 	head_open,
-	whitespace,
+	newline, tab,
 	title(Title),
-	whitespace,
+	newline, tab,
 	meta,
-	whitespace,
+	newline, tab,
 	styles,
-	whitespace,
+	newline, tab,
 	rss,
-	whitespace,
+	newline,
 	head_close.
 
 body(Entry, Title, Subtitle, Date) -->
 	body_open,
-	whitespace,
+	newline, tab,
 	header(Title),
-	whitespace,
+	newline, tab,
 	article(Entry, Title, Subtitle, Date),
-	whitespace,
+	newline, tab,
 	entry_utility,
-	whitespace,
+	newline, tab,
 	footer,
-	whitespace,
+	newline,
 	body_close.
 
 header(Title) -->
 	header_open,
-	whitespace,
+	newline, tab, tab,
 	header_title(Title),
-	whitespace,
+	newline, tab, tab,
 	header_subtitle,
-	whitespace,
+	newline, tab,
 	header_close.
 
 article(Entry, Title, Subtitle, Date) -->
 	article_open,
-	whitespace,
+	newline, tab, tab,
 	article_header(Title, Subtitle, Date),
-	whitespace,
+	newline, tab, tab,
 	div_entry_open,
-	whitespace,
+	newline,
 	anything(Entry),
-	whitespace,
+	newline, tab, tab,
 	div_entry_close,
-	whitespace,
+	newline, tab,
 	article_close,
 	{ [First|_] = Entry,  char_code('<', First) }.
 
@@ -77,41 +77,41 @@ article_header(Title, null, null) -->
 % An article without a subtitle.
 article_header(Title, null, Date) -->
 	article_title(Title),
-	whitespace,
+	newline, tab, tab,
 	article_meta(Date).
 
 % An article without metadata.
 article_header(Title, Subtitle, null) -->
 	article_title(Title),
-	whitespace,
+	newline, tab, tab,
 	article_subtitle(Subtitle).
 
 % An article with all header components.
 article_header(Title, Subtitle, Date) -->
 	article_title(Title),
-	whitespace,
+	newline, tab, tab,
 	article_subtitle(Subtitle),
-	whitespace,
+	newline, tab, tab,
 	article_meta(Date).
 
 footer -->
 	footer_open,
-	whitespace,
+	newline, tab, tab,
 	p_center_open,
-	whitespace,
+	newline, tab, tab, tab,
 	license_link,
-	whitespace,
+	newline, tab, tab, tab,
 	br,
-	whitespace,
+	newline, tab, tab, tab,
 	license_text,
-	whitespace,
+	newline, tab, tab,
 	p_close,
-	whitespace,
+	newline, tab,
 	footer_close.
 
 doctype --> "<!DOCTYPE html>".
 
-html_open --> "<html lang=\"en\">".
+html_open --> "<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">".
 
 head_open --> "<head>".
 
@@ -195,14 +195,14 @@ article_subtitle(ArticleSubtitle) -->
 
 article_meta(ArticleDate) -->
 	"<div class=\"entry-meta\">",
-	whitespace,
+	newline, tab, tab, tab,
 	"<time datetime=\"",
 	anything(ArticleDate),
 	anything(_),
 	"\">",
 	anything(ArticleDate),
 	"</time>",
-	whitespace,
+	newline, tab, tab,
 	"</div><!-- .entry-meta -->".
 
 div_entry_open --> "<div class=\"entry-content\">".

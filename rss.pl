@@ -5,39 +5,38 @@
 
 rss(BuildDate, Articles) -->
 	rss_open,
-	"\n",
+	newline, tab, tab,
 	channel_meta(BuildDate),
-	"\n",
 	items(Articles),
-	"\n",
+	newline, tab,
 	rss_close.
 
 rss_open -->
 	"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
-	"\n",
+	newline,
 	"<rss version=\"2.0\">",
-	"\n",
+	newline, tab,
 	"<channel>".
 
 channel_meta(BuildDate) -->
 	"<title>",
 	site_title,
 	"</title>",
-	"\n",
+	newline, tab, tab,
 	"<description>",
 	site_subtitle,
 	"</description>",
-	"\n",
+	newline, tab, tab,
 	"<link>",
 	site_url,
 	"</link>",
-	"\n",
+	newline, tab, tab,
 	language,
-	"\n",
+	newline, tab, tab,
 	copyright,
-	"\n",
+	newline, tab, tab,
 	webmaster,
-	"\n",
+	newline, tab, tab,
 	last_build_date(BuildDate).
 
 title(Title) -->
@@ -80,18 +79,19 @@ items([]) --> [].
 items([First|Rest]) --> item(First), items(Rest).
 
 item(article(Date, Title, Link, Description)) -->
+	newline, tab, tab,
 	item_open,
-	"\n",
+	newline, tab, tab, tab,
 	title(Title),
-	"\n",
+	newline, tab, tab, tab,
 	link(Link),
-	"\n",
+	newline, tab, tab, tab,
 	description(Description),
-	"\n",
+	newline, tab, tab, tab,
 	author,
-	"\n",
+	newline, tab, tab, tab,
 	pubdate(Date),
-	"\n",
+	newline, tab, tab,
 	item_close.
 
 item_open --> "<item>".
@@ -110,5 +110,5 @@ item_close --> "</item>".
 
 rss_close -->
 	"</channel>",
-	"\n",
+	newline,
 	"</rss>".
