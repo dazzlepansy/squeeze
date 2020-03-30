@@ -6,7 +6,6 @@ SOURCE_DIR=source
 SITE_PATH=$1
 
 # Create the directory structure.
-rm -rf "$SITE_PATH"/"$SOURCE_DIR"/*
 find "$SITE_PATH"/"$OUTPUT_DIR" -type d |
 	sed "s|^$SITE_PATH/$OUTPUT_DIR|$SITE_PATH/$SOURCE_DIR|" |
 	xargs -0 -d '\n' mkdir -p --
@@ -28,8 +27,4 @@ find "$SITE_PATH"/"$OUTPUT_DIR" -type f -name "*.html" -print0 |
 
 # Copy anything else directly.
 # Excludes the RSS folder, which we create ourselves upon generation.
-find "$SITE_PATH"/"$OUTPUT_DIR" -path "$SITE_PATH"/"$OUTPUT_DIR"/feeds -prune -o -type f -not -name "*.html" -print0 |
-	while IFS= read -r -d '' file; do
-		NEW_PATH=`echo "$file" | sed "s|^$SITE_PATH/$OUTPUT_DIR|$SITE_PATH/$SOURCE_DIR|"`
-		cp "$file" "$NEW_PATH"
-	done
+rsync --archive --delete --verbose --exclude "*.html" --exclude "*.md" --exclude "feeds" "$SITE_PATH/$OUTPUT_DIR/" "$SITE_PATH/$SOURCE_DIR/"

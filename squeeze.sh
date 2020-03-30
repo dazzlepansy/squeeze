@@ -6,7 +6,6 @@ SOURCE_DIR=source
 SITE_PATH=$1
 
 # Create the directory structure.
-rm -rf "$SITE_PATH"/"$OUTPUT_DIR"/*
 find "$SITE_PATH"/"$SOURCE_DIR" -type d |
 	sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" |
 	xargs -0 -d '\n' mkdir -p --
@@ -16,21 +15,20 @@ find "$SITE_PATH"/"$SOURCE_DIR" -type f -name "*.md" -print0 |
 	while IFS= read -r -d '' file; do
 		echo $file
 		NEW_PATH=`echo "$file" | sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" | sed 's|.md$|.html|'`
-		# Get everything after the metadata and feed it through Pandoc.
-		sed "1,/^$/d" "$file" |
-			pandoc --ascii --from markdown+smart --to html |
-			# Recombine with the metadata and hand it to Prolog.
-			(sed "/^$/q" "$file" && cat) |
-			swipl --traditional -q -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." \
-			> "$NEW_PATH"
+		# Only process files whose destination doesn't exist, or which has been recently changed.
+		if [ ! -f $NEW_PATH ] || [[ $(find $file -mtime -7) ]]; then
+			# Get everything after the metadata and feed it through Pandoc.
+			sed "1,/^$/d" "$file" |
+				pandoc --ascii --from markdown+smart --to html |
+				# Recombine with the metadata and hand it to Prolog.
+				(sed "/^$/q" "$file" && cat) |
+				swipl --traditional -q -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." \
+				> "$NEW_PATH"
+		fi
 	done
 
 # Copy anything else directly.
-find "$SITE_PATH"/"$SOURCE_DIR" -type f -not -name "*.md" -print0 |
-	while IFS= read -r -d '' file; do
-		NEW_PATH=`echo "$file" | sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|"`
-		cp "$file" "$NEW_PATH"
-	done
+rsync --archive --delete --verbose --exclude "*.md" --exclude "*.html" --exclude "feeds" "$SITE_PATH/$SOURCE_DIR/" "$SITE_PATH/$OUTPUT_DIR/"
 
 # Generate the RSS feed.
 mkdir -p "$SITE_PATH"/"$OUTPUT_DIR"/feeds
