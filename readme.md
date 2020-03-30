@@ -14,7 +14,7 @@ It's pretty closely tailored to my specific needs, but it works, and IMHO it wor
 
 * Bash. Used to run the script that automates everything else.
 * A Prolog interpreter. Tested with [SWI-Prolog](https://www.swi-prolog.org/), but the syntax aims to be vanilla ISO Prolog and should work with any implementation.
-* [Smartypants](https://github.com/leohemsted/smartypants.py). Used to smarten the punctuation in the HTML output.
+* [Pandoc](http://pandoc.org/). Used to convert Markdown to HTML and smarten the punctuation.
 
 ## Assumptions
 
@@ -47,7 +47,3 @@ Generate a static website from Markdown sources:
 Generate source files from a static website:
 
 	./unsqueeze.sh /home/user/website
-
-## Still to do
-
-The source Markdown files are currently assumed to be plain HTML with a Markdown header containing metadata. I'm going to need something to convert proper Markdown to HTML, so I'll probably add Pandoc as a dependency to squeeze.sh. I expect this will also replace Smartypants for doing smart punctuation.

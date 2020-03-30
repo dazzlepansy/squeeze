@@ -16,9 +16,12 @@ find "$SITE_PATH"/"$SOURCE_DIR" -type f -name "*.md" -print0 |
 	while IFS= read -r -d '' file; do
 		echo $file
 		NEW_PATH=`echo "$file" | sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" | sed 's|.md$|.html|'`
-		cat "$file" |
-			swipl --traditional -q -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." |
-			smartypants \
+		# Get everything after the metadata and feed it through Pandoc.
+		sed "1,/^$/d" "$file" |
+			pandoc --ascii --from markdown+smart --to html |
+			# Recombine with the metadata and hand it to Prolog.
+			(sed "/^$/q" "$file" && cat) |
+			swipl --traditional -q -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." \
 			> "$NEW_PATH"
 	done
 
