@@ -34,7 +34,8 @@ find "$SITE_PATH"/"$SOURCE_DIR" -type f -not -name "*.md" -print0 |
 
 # Generate the RSS feed.
 mkdir -p "$SITE_PATH"/"$OUTPUT_DIR"/feeds
-ARTICLES=`grep -Rl --include=\*.md "^Date: " "$SITE_PATH"/"$SOURCE_DIR" | paste -sd ',' - | sed "s|,|','|g"`
+# Grep the date of each article, sort them by date, then get a list of file names and take the most recent five.
+ARTICLES=`grep -R --include=\*.md "^Date: " "$SITE_PATH"/"$SOURCE_DIR" | sed -rn 's/^([^:]+):(.+)$/\2\t\1/p' | sort | cut -f2 | tail -5 | paste -sd ',' - | sed "s|,|','|g"`
 BUILD_DATE=`date +"%Y-%m-%d %T"`
 swipl --traditional -q -l generate_rss.pl -g "consult('$SITE_PATH/site.pl'), generate_rss(\"$BUILD_DATE\", ['$ARTICLES'])." \
 	> "$SITE_PATH"/"$OUTPUT_DIR"/feeds/rss.xml

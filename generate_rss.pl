@@ -17,10 +17,8 @@ generate_rss(BuildDate, Filenames):-
 	files_to_articles(Filenames, Articles),
 	% Sort articles by date.
 	sort(Articles, SortedArticles),
-	% Grab the most recent 5.
-	take_last(5, SortedArticles, TakenArticles),
 	% Convert to RSS and write to stdout.
-	rss(BuildDate, TakenArticles, RSSCodes, []),
+	rss(BuildDate, SortedArticles, RSSCodes, []),
 	atom_codes(RSS, RSSCodes),
 	write(RSS),
 	halt.
