@@ -9,11 +9,24 @@ SITE_PATH=$1
 # This will also create the folder structure for the destination Markdown files.
 rsync --archive --delete --verbose --exclude "*.md" --exclude "*.html" --exclude "feeds" "$SITE_PATH/$SOURCE_DIR/" "$SITE_PATH/$OUTPUT_DIR/"
 
+# Delete any HTML files for which the source was removed.
+find "$SITE_PATH/$OUTPUT_DIR" -type f -name "*.html" -print0 |
+	while IFS= read -r -d '' file; do
+		OLD_PATH=`echo "$file" |
+			sed "s|^$SITE_PATH/$OUTPUT_DIR|$SITE_PATH/$SOURCE_DIR|" |
+			sed 's|.html$|.md|'`
+		if [ ! -f $OLD_PATH ]; then
+			rm $file
+		fi
+	done
+
 # Parse and create all the HTML files.
 find "$SITE_PATH/$SOURCE_DIR" -type f -name "*.md" -print0 |
 	while IFS= read -r -d '' file; do
 		echo $file
-		NEW_PATH=`echo "$file" | sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" | sed 's|.md$|.html|'`
+		NEW_PATH=`echo "$file" |
+			sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" |
+			sed 's|.md$|.html|'`
 		# Only process files whose destination doesn't exist, or which has been recently changed.
 		if [ ! -f $NEW_PATH ] || [[ $(find $file -mtime -7) ]]; then
 			# Get everything after the metadata and feed it through Pandoc.
