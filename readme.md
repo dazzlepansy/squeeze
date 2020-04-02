@@ -14,7 +14,8 @@ It's pretty closely tailored to my specific needs, but it works, and IMHO it wor
 
 * Bash. Used to run the script that automates everything else.
 * A Prolog interpreter. Tested with [SWI-Prolog](https://www.swi-prolog.org/), but the syntax aims to be vanilla ISO Prolog and should work with any implementation.
-* [Pandoc](http://pandoc.org/). Used to convert Markdown to HTML and smarten the punctuation.
+* [Pandoc](http://pandoc.org/). Used to convert Markdown to HTML.
+* [Smartypants](https://github.com/leohemsted/smartypants.py). Used to smarten the punctuation in the HTML output.
 
 ## Assumptions
 

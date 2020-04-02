@@ -35,7 +35,9 @@ find "$SITE_PATH/$SOURCE_DIR" -type f -name "*.md" -print0 |
 				pandoc --ascii --from markdown+smart --to html |
 				# Recombine with the metadata and hand it to Prolog.
 				(sed "/^$/q" "$file" && cat) |
-				swipl --traditional -q -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." \
+				swipl --traditional -q -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." |
+				# Smarten remaining punctuation (e.g. parts of the template).
+				smartypants \
 				> "$NEW_PATH"
 		fi
 	done
