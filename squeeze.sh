@@ -23,16 +23,16 @@ find "$SITE_PATH/$OUTPUT_DIR" -type f -name "*.html" -print0 |
 # Parse and create all the HTML files.
 find "$SITE_PATH/$SOURCE_DIR" -type f -name "*.md" -print0 |
 	while IFS= read -r -d '' file; do
-		echo $file
 		NEW_PATH=`echo "$file" |
 			sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" |
 			sed 's|.md$|.html|'`
 		# Only process files whose destination doesn't exist, or which has been recently changed.
 		if [ ! -f $NEW_PATH ] || [[ $(find $file -mtime -7) ]]; then
-			# Get everything after the metadata and feed it through Pandoc.
+			echo $file
+			# Get everything after the metadata.
 			sed "1,/^$/d" "$file" |
-				# Convert Markdown to HTML and smarten punctuation.
-				pandoc --ascii --from markdown+smart --to html |
+				# Convert Markdown to HTML.
+				markdown |
 				# Recombine with the metadata and hand it to Prolog.
 				(sed "/^$/q" "$file" && cat) |
 				swipl --traditional -q -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." |
