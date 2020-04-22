@@ -11,22 +11,24 @@ SITE_PATH=$1
 rsync --archive --delete --verbose --exclude "*.html" --exclude "*.md" --exclude "feeds" "$SITE_PATH/$OUTPUT_DIR/" "$SITE_PATH/$SOURCE_DIR/"
 
 # Delete any Markdown files for which the output was removed.
-find "$SITE_PATH/$SOURCE_DIR" -type f -name "*.md" -print0 |
-	while IFS= read -r -d '' file; do
-		OLD_PATH=`echo "$file" |
+find "$SITE_PATH/$SOURCE_DIR" -type f -name "*.md" |
+	while read -r file; do
+		OLD_PATH=$(echo "$file" |
 			sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" |
-			sed 's|.md$|.html|'`
-		if [ ! -f $OLD_PATH ]; then
-			rm $file
+			sed 's|.md$|.html|')
+		if [ ! -f "$OLD_PATH" ]; then
+			rm "$file"
 		fi
 	done
 
 # Parse and create all the markdown files.
-find "$SITE_PATH/$OUTPUT_DIR" -type f -name "*.html" -print0 |
-	while IFS= read -r -d '' file; do
-		NEW_PATH=`echo "$file" | sed "s|^$SITE_PATH/$OUTPUT_DIR|$SITE_PATH/$SOURCE_DIR|" | sed 's|.html$|.md|'`
+find "$SITE_PATH/$OUTPUT_DIR" -type f -name "*.html" |
+	while read -r file; do
+		NEW_PATH=$(echo "$file" |
+			sed "s|^$SITE_PATH/$OUTPUT_DIR|$SITE_PATH/$SOURCE_DIR|" |
+			sed 's|.html$|.md|')
 		cat "$file" |
-			swipl --traditional -q -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry." |
+			swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry." |
 			# Unsmarten the punctuation.
 			sed "s|&nbsp;| |g" |
 			sed "s|&#8216;|'|g" |
