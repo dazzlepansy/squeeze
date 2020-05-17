@@ -6,37 +6,40 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 markdown(Entry, Title, Subtitle, Date) -->
-	metadata("Title", Title),
-	"\n",
-	metadata("Subtitle", Subtitle),
-	"\n",
-	metadata("Date", Date),
-	"\n\n",
+	"Title: ",
+	anything(Title),
+	newline,
+	"Subtitle: ",
+	anything(Subtitle),
+	newline,
+	"Date: ",
+	anything(Date),
+	newline, newline,
 	anything(Entry).
 
 markdown(Entry, Title, null, Date) -->
-	metadata("Title", Title),
-	"\n",
-	metadata("Date", Date),
-	"\n\n",
+	"Title: ",
+	anything(Title),
+	newline,
+	"Date: ",
+	anything(Date),
+	newline, newline,
 	anything(Entry).
 
 markdown(Entry, Title, Subtitle, null) -->
-	metadata("Title", Title),
-	"\n",
-	metadata("Subtitle", Subtitle),
-	"\n\n",
+	"Title: ",
+	anything(Title),
+	newline,
+	"Subtitle: ",
+	anything(Subtitle),
+	newline, newline,
 	anything(Entry).
 
 markdown(Entry, Title, null, null) -->
-	metadata("Title", Title),
-	"\n\n",
+	"Title: ",
+	anything(Title),
+	newline, newline,
 	anything(Entry).
 
 markdown(Entry, null, null, null) -->
 	anything(Entry).
-
-metadata(Key, Value) -->
-	Key,
-	": ",
-	anything(Value).

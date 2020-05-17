@@ -27,8 +27,7 @@ parse_entry(Filename):-
 parse_html(HTML):-
 	page(EntryCodes, Title, Subtitle, Date, HTML, []),
 	markdown(EntryCodes, Title, Subtitle, Date, MarkdownCodes, []),
-	atom_codes(Markdown, MarkdownCodes),
-	write(Markdown),
+	write_codes(MarkdownCodes),
 	halt.
 
 
@@ -52,6 +51,5 @@ generate_entry(Filename):-
 generate_html(Markdown):-
 	markdown(EntryCodes, Title, Subtitle, Date, Markdown, []),
 	page(EntryCodes, Title, Subtitle, Date, HTMLCodes, []),
-	atom_codes(HTML, HTMLCodes),
-	write(HTML),
+	write_codes(HTMLCodes),
 	halt.

@@ -51,6 +51,19 @@ append_lists([First|List1], List2, [First|Result]):-
 	append_lists(List1, List2, Result).
 
 
+% write_codes(+CodesList).
+%   Loop through a list of character codes, convert each one to a
+%   character, and write them to the current output stream one at
+%   a time. This is better than converting the whole list to an atom
+%   with atom_codes/2, which can trigger a segfault if the atom is too long.
+write_codes([]).
+
+write_codes([X|Rest]):-
+	char_code(Char, X),
+	write(Char),
+	write_codes(Rest).
+
+
 anything([]) --> [].
 
 anything([X|Rest]) --> [X], anything(Rest).

@@ -13,7 +13,7 @@ It's pretty closely tailored to my specific needs, but it works, and IMHO it wor
 ## Dependencies
 
 * Bash. Used to run the script that automates everything else.
-* A Prolog interpreter. Tested with [SWI-Prolog](https://www.swi-prolog.org/), but the syntax aims to be vanilla ISO Prolog and should work with any implementation.
+* A Prolog interpreter. Tested with [SWI-Prolog](https://www.swi-prolog.org/) and [GNU Prolog](http://www.ohloh.net/p/gprolog), but the syntax aims to be vanilla ISO Prolog and should work with any implementation.
 * [Markdown](https://daringfireball.net/projects/markdown/). Used to convert Markdown to HTML.
 * [SmartyPants](https://daringfireball.net/projects/smartypants/). Used to smarten the punctuation in the HTML output.
 

@@ -19,8 +19,7 @@ generate_rss(BuildDate, Filenames):-
 	sort(Articles, SortedArticles),
 	% Convert to RSS and write to stdout.
 	rss(BuildDate, SortedArticles, RSSCodes, []),
-	atom_codes(RSS, RSSCodes),
-	write(RSS),
+	write_codes(RSSCodes),
 	halt.
 
 

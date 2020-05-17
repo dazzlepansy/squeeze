@@ -35,7 +35,11 @@ find "$SITE_PATH/$SOURCE_DIR" -type f -name "*.md" |
 				markdown |
 				# Recombine with the metadata and hand it to Prolog.
 				(sed "/^$/q" "$file" && cat) |
+				#gprolog --consult-file parse_entry.pl --consult-file "$SITE_PATH/site.pl" --entry-goal "generate_entry" |
 				swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." |
+				# Some Prolog variants will output banners and "compiling" output no matter how nicely you ask them not to.
+				# Strip everything before the doctype declaration.
+				awk "/<!DOCTYPE/{i++}i" |
 				# Smarten punctuation.
 				smartypants \
 				> "$NEW_PATH"
@@ -59,5 +63,9 @@ ARTICLES=$(grep --recursive --include=\*.md "^Date: " "$SITE_PATH/$SOURCE_DIR" |
 	sed "s|,|','|g")
 BUILD_DATE=$(date +"%Y-%m-%d %T")
 # Parse the articles and generate the RSS.
-swipl --traditional --quiet -l generate_rss.pl -g "consult('$SITE_PATH/site.pl'), generate_rss(\"$BUILD_DATE\", ['$ARTICLES'])." \
+#gprolog --consult-file generate_rss.pl --consult-file "$SITE_PATH/site.pl" --entry-goal "generate_rss(\"$BUILD_DATE\", ['$ARTICLES'])" |
+swipl --traditional --quiet -l generate_rss.pl -g "consult('$SITE_PATH/site.pl'), generate_rss(\"$BUILD_DATE\", ['$ARTICLES'])." |
+	# Strip everything before the XML declaration.
+	awk "/<?xml/{i++}i" \
 	> "$SITE_PATH/$OUTPUT_DIR/feeds/rss.xml"
+	
