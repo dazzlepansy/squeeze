@@ -54,6 +54,11 @@ item_link(Link) -->
 	Link,
 	"</link>".
 
+item_guid(Link) -->
+	"<guid>",
+	Link,
+	"</guid>".
+
 language -->
 	"<language>",
 	"en-US",
@@ -85,6 +90,8 @@ item(article(Date, Title, Link, Description)) -->
 	item_title(Title),
 	newline, tab, tab, tab,
 	item_link(Link),
+	newline, tab, tab, tab,
+	item_guid(Link),
 	newline, tab, tab, tab,
 	item_description(Description),
 	newline, tab, tab, tab,
