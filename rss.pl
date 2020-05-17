@@ -39,17 +39,17 @@ channel_meta(BuildDate) -->
 	newline, tab, tab,
 	last_build_date(BuildDate).
 
-title(Title) -->
+item_title(Title) -->
 	"<title>",
 	Title,
 	"</title>".
 
-description(Description) -->
+item_description(Description) -->
 	"<description>",
 	Description,
 	"</description>".
 
-link(Link) -->
+item_link(Link) -->
 	"<link>",
 	Link,
 	"</link>".
@@ -82,15 +82,15 @@ item(article(Date, Title, Link, Description)) -->
 	newline, tab, tab,
 	item_open,
 	newline, tab, tab, tab,
-	title(Title),
+	item_title(Title),
 	newline, tab, tab, tab,
-	link(Link),
+	item_link(Link),
 	newline, tab, tab, tab,
-	description(Description),
+	item_description(Description),
 	newline, tab, tab, tab,
 	author,
 	newline, tab, tab, tab,
-	pubdate(Date),
+	item_pubdate(Date),
 	newline, tab, tab,
 	item_close.
 
@@ -101,7 +101,7 @@ author -->
 	user_name,
 	"</author>".
 
-pubdate(Date) -->
+item_pubdate(Date) -->
 	"<pubDate>",
 	anything(Date),
 	"</pubDate>".
