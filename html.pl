@@ -38,8 +38,6 @@ body(Entry, Title, Subtitle, Date) -->
 	newline, tab,
 	article(Entry, Title, Subtitle, Date),
 	newline, tab,
-	entry_utility,
-	newline, tab,
 	footer,
 	newline,
 	body_close.
@@ -129,11 +127,6 @@ title(Title) -->
 	anything(Title),
 	"</title>".
 
-title(_) -->
-	"<title>",
-	anything(_),
-	"</title>".
-
 styles -->
 	"<link rel=\"stylesheet\" href=\"",
 	site_url,
@@ -178,11 +171,6 @@ header_close --> "</header>".
 
 article_open --> "<article>".
 
-article_open -->
-	"<article id=\"",
-	anything(_),
-	"\">".
-
 article_title(ArticleTitle) -->
 	"<h1 class=\"entry-title\">",
 	anything(ArticleTitle),
@@ -198,7 +186,6 @@ article_meta(ArticleDate) -->
 	newline, tab, tab, tab,
 	"<time datetime=\"",
 	anything(ArticleDate),
-	anything(_),
 	"\">",
 	anything(ArticleDate),
 	"</time>",
@@ -209,17 +196,7 @@ div_entry_open --> "<div class=\"entry-content\">".
 
 div_entry_close --> "</div><!-- .entry-content -->".
 
-article_close -->
-	"</article><!-- ",
-	anything(_),
-	" -->".
-
-entry_utility --> [].
-
-entry_utility -->
-	"<div class=\"entry-utility\">",
-	anything(_),
-	"</div><!-- #entry-utility -->".
+article_close --> "</article>".
 
 footer_open --> "<footer>".
 
