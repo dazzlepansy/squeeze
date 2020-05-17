@@ -7,7 +7,8 @@
 page(Entry, Title, Subtitle, Date) -->
 	doctype,
 	newline,
-	html(Entry, Title, Subtitle, Date).
+	html(Entry, Title, Subtitle, Date),
+	newline.
 
 html(Entry, Title, Subtitle, Date) -->
 	html_open,

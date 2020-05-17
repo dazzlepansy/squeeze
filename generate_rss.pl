@@ -4,7 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :- include('helpers.pl').
-:- include('markdown.pl').
+:- include('html.pl').
 :- include('rss.pl').
 
 % generate_rss(+BuildDate, +Filenames).
@@ -29,12 +29,12 @@ files_to_articles([], []).
 
 files_to_articles([Filename|Filenames], [article(Date, Title, Link, Description)|Articles]):-
 	open(Filename, read, Stream),
-	read_file(Stream, Markdown),
+	read_file(Stream, HTML),
 	close(Stream),
 	% Grab the link.
 	get_link(Filename, Link),
-	% Extract the title, entry, etc. from the Markdown.
-	markdown(Entry, Title, _, Date, Markdown, []),
+	% Extract the title, entry, etc. from the HTML.
+	page(Entry, Title, _, Date, HTML, []),
 	% XML escape the description.
 	replace("&", "&amp;", Entry, EntryAmp),
 	replace("<", "&lt;", EntryAmp, EntryLT),
@@ -48,18 +48,18 @@ get_link(Filename, Link):-
 	atom_codes(Filename, FilenameCodes),
 	% Just assert that this is an index file before we go further.
 	% Backtracking after this point will take us down a rabbit hole.
-	append_lists(_, "index.md", FilenameCodes),
+	append_lists(_, "index.html", FilenameCodes),
 	site_url(URL, []),
-	append_lists(_, "/source", StartPath),
+	append_lists(_, "/output", StartPath),
 	append_lists(StartPath, Path, FilenameCodes),
-	append_lists(PathWithoutFile, "index.md", Path),
+	append_lists(PathWithoutFile, "index.html", Path),
 	append_lists(URL, PathWithoutFile, Link).
 
 get_link(Filename, Link):-
 	atom_codes(Filename, FilenameCodes),
 	site_url(URL, []),
-	append_lists(_, "/source", StartPath),
+	append_lists(_, "/output", StartPath),
 	append_lists(StartPath, Path, FilenameCodes),
-	append_lists(PathWithoutExtension, ".md", Path),
+	append_lists(PathWithoutExtension, ".html", Path),
 	append_lists(PathWithoutExtension, "/", PathWithSlash),
 	append_lists(URL, PathWithSlash, Link).

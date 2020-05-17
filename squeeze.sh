@@ -58,6 +58,9 @@ ARTICLES=$(grep --recursive --include=\*.md "^Date: " "$SITE_PATH/$SOURCE_DIR" |
 	cut --fields=2 |
 	# Get the last (i.e. most recent) posts for the RSS feed.
 	tail -5 |
+	# Convert paths so we operate on the generated HTML, not the unformatted Markdown.
+	sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" |
+	sed 's|.md$|.html|' |
 	# Glue the file names together to be passed to Prolog.
 	paste --serial --delimiters=',' - |
 	sed "s|,|','|g")
@@ -68,4 +71,3 @@ swipl --traditional --quiet -l generate_rss.pl -g "consult('$SITE_PATH/site.pl')
 	# Strip everything before the XML declaration.
 	awk "/<?xml/{i++}i" \
 	> "$SITE_PATH/$OUTPUT_DIR/feeds/rss.xml"
-	
