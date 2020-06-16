@@ -1,20 +1,20 @@
-#!/bin/bash
-
-OUTPUT_DIR=output
-SOURCE_DIR=source
+#!/usr/bin/env bash
 
 SITE_PATH=$1
+
+OUTPUT_PATH="$SITE_PATH/output"
+SOURCE_PATH="$SITE_PATH/source"
 
 # Copy everything that's not Markdown or HTML.
 # Excludes the RSS folder, which we create ourselves upon generation.
 # This will also create the folder structure for the destination Markdown files.
-rsync --archive --delete --verbose --exclude "*.html" --exclude "*.md" --exclude "feeds" "$SITE_PATH/$OUTPUT_DIR/" "$SITE_PATH/$SOURCE_DIR/"
+rsync --archive --delete --verbose --exclude "*.html" --exclude "*.md" --exclude "feeds" "$OUTPUT_PATH/" "$SOURCE_PATH/"
 
 # Delete any Markdown files for which the output was removed.
-find "$SITE_PATH/$SOURCE_DIR" -type f -name "*.md" |
+find "$SOURCE_PATH" -type f -name "*.md" |
 	while read -r file; do
 		OLD_PATH=$(echo "$file" |
-			sed "s|^$SITE_PATH/$SOURCE_DIR|$SITE_PATH/$OUTPUT_DIR|" |
+			sed "s|^$SOURCE_PATH|$OUTPUT_PATH|" |
 			sed 's|.md$|.html|')
 		if [ ! -f "$OLD_PATH" ]; then
 			rm "$file"
@@ -22,10 +22,10 @@ find "$SITE_PATH/$SOURCE_DIR" -type f -name "*.md" |
 	done
 
 # Parse and create all the markdown files.
-find "$SITE_PATH/$OUTPUT_DIR" -type f -name "*.html" |
+find "$OUTPUT_PATH" -type f -name "*.html" |
 	while read -r file; do
 		NEW_PATH=$(echo "$file" |
-			sed "s|^$SITE_PATH/$OUTPUT_DIR|$SITE_PATH/$SOURCE_DIR|" |
+			sed "s|^$OUTPUT_PATH|$SOURCE_PATH|" |
 			sed 's|.html$|.md|')
 		swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry('$file')." |
 			# Unsmarten the punctuation.
