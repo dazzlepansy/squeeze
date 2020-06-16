@@ -27,7 +27,6 @@ find "$SITE_PATH/$OUTPUT_DIR" -type f -name "*.html" |
 		NEW_PATH=$(echo "$file" |
 			sed "s|^$SITE_PATH/$OUTPUT_DIR|$SITE_PATH/$SOURCE_DIR|" |
 			sed 's|.html$|.md|')
-		#gprolog --consult-file parse_entry.pl --consult-file "$SITE_PATH/site.pl" --entry-goal "parse_entry('$file')" |
 		swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry('$file')." |
 			# Unsmarten the punctuation.
 			sed "s|&nbsp;| |g" |

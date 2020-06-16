@@ -7,6 +7,11 @@
 :- include('html.pl').
 :- include('markdown.pl').
 
+% Include files for dialect-dependent predicates.
+:- discontiguous(markdown_to_html/2).
+:- include('dialects/gnu-prolog.pl').
+:- include('dialects/swi-prolog.pl').
+
 % parse_entry.
 %	Read in an HTML file from stdin.
 parse_entry:-
@@ -27,7 +32,7 @@ parse_entry(Filename):-
 parse_html(HTML):-
 	page(EntryCodes, Title, Subtitle, Date, HTML, []),
 	markdown(EntryCodes, Title, Subtitle, Date, MarkdownCodes, []),
-	write_codes(MarkdownCodes),
+	write_codes(user_output, MarkdownCodes),
 	halt.
 
 
@@ -50,6 +55,7 @@ generate_entry(Filename):-
 %	Parse Markdown into an HTML file and write to stdout.
 generate_html(Markdown):-
 	markdown(EntryCodes, Title, Subtitle, Date, Markdown, []),
-	page(EntryCodes, Title, Subtitle, Date, HTMLCodes, []),
-	write_codes(HTMLCodes),
+	markdown_to_html(EntryCodes, HTMLEntryCodes),
+	page(HTMLEntryCodes, Title, Subtitle, Date, HTMLCodes, []),
+	write_codes(user_output, HTMLCodes),
 	halt.

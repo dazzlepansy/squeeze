@@ -4,7 +4,7 @@ A static site generator that can put the toothpaste back in the tube.
 
 ## What is this?
 
-A few months ago I lost the source files I used to generate my static website. Fortunately there was no irreparable data loss because I still had the generated site up on my server. The problem was now I needed to write a script that would extract all the articles into source files again, and then I'd have to reconfigure the site generator. Then I went, "Oh. This is a Prolog problem." (But then I love Prolog so every problem is a Prolog problem but I don't care. Fight me.) A Prolog problem is basically a set of rules and the logic can be run in either direction. I figured if I could write a Prolog program that described my HTML template then I could use the same code both to un-generate and re-generate the website.
+A few months ago I lost the source files I used to generate my static website. Fortunately there was no irreparable data loss because I still had the generated site up on my server. The problem was now I needed to write a script that would extract all the articles into source files again, and then I'd have to reconfigure the site generator. Then I went, "Oh. This is a Prolog problem." (But then I love Prolog so every problem is a Prolog problem. I don't care. Fight me.) A Prolog program is basically a set of rules and the logic that's guided by those rules can be run in either direction. I figured if I could write a Prolog program that described my HTML template then I could use the same code both to un-generate and re-generate the website.
 
 So the skinny is I wound up writing my own static website generator in Prolog. Well, the main components are in Prolog. I also wrote a bash script to make use of a bunch of common \*nix utilities (find, sed, grep, etc.) and to pipe output to some third-party programs where I needed them (Markdown and SmartyPants). Weirdest bit was that I just couldn't find anything decent to generate RSS feeds. I considered dropping the RSS all together, but I've spent enough time haranguing people for not supporting interoperable standards that I didn't want to be a hypocrite. I wound up writing my own RSS generator too, also in Prolog.
 
@@ -39,6 +39,8 @@ site.pl contains DCG definitions of this site's specifics, such as title, author
 
 	user_name --> "Harold Gruntfuttock".
 
+	markdown_command(['/usr/bin/hoedown', '--footnotes']).
+
 ## Use
 
 Generate a static website from Markdown sources:
@@ -48,3 +50,9 @@ Generate a static website from Markdown sources:
 Generate source files from a static website:
 
 	./unsqueeze.sh /home/user/website
+
+## Notes
+
+The Markdown converter is called from inside Prolog, so the path to your Markdown (and any arguments) is specified in site.pl. This allows you to have different Markdown converters or arguments on a per-site basis.
+
+Because ISO Prolog doesn't support making calls to external programs, I've implemented a compatibility layer that allows you to define the `markdown_to_html` predicate for whatever dialect of Prolog you happen to use. Included are compatibility predicates for SWI-Prolog and GNU Prolog.
