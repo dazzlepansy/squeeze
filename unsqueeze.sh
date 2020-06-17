@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 SITE_PATH=$1
 
@@ -16,9 +16,7 @@ find "$SOURCE_PATH" -type f -name "*.md" |
 		OLD_PATH=$(echo "$file" |
 			sed "s|^$SOURCE_PATH|$OUTPUT_PATH|" |
 			sed 's|.md$|.html|')
-		if [ ! -f "$OLD_PATH" ]; then
-			rm "$file"
-		fi
+		[ ! -f "$OLD_PATH" ] && rm "$file"
 	done
 
 # Parse and create all the markdown files.

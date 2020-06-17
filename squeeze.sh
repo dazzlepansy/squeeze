@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 SITE_PATH=$1
 
@@ -15,9 +15,7 @@ find "$OUTPUT_PATH" -type f -name "*.html" |
 		OLD_PATH=$(echo "$file" |
 			sed "s|^$OUTPUT_PATH|$SOURCE_PATH|" |
 			sed 's|.html$|.md|')
-		if [ ! -f "$OLD_PATH" ]; then
-			rm "$file"
-		fi
+		[ ! -f "$OLD_PATH" ] && rm "$file"
 	done
 
 # Parse and create all the HTML files.
@@ -27,14 +25,12 @@ find "$SOURCE_PATH" -type f -name "*.md" |
 			sed "s|^$SOURCE_PATH|$OUTPUT_PATH|" |
 			sed 's|.md$|.html|')
 		# Only process files whose destination doesn't exist, or which has been recently changed.
-		if [ ! -f "$NEW_PATH" ] || [[ $(find "$file" -mtime -7) ]]; then
-			echo "$file"
-
+		[ ! -f "$NEW_PATH" ] || find "$file" -mtime -7 | grep -q . &&
+			echo "$file" &&
 			swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry('$file')." |
 				# Smarten punctuation.
 				smartypants \
 				> "$NEW_PATH"
-		fi
 	done
 
 # Generate the RSS feed.
