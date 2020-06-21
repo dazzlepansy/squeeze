@@ -37,14 +37,12 @@ find "$SOURCE_PATH" -type f -name "*.md" |
 mkdir -p "$OUTPUT_PATH/feeds"
 # Grep the date of each article.
 ARTICLES=$(grep --recursive --include=\*.md "^Date: " "$SOURCE_PATH" |
-	# Reformat the output so the date comes first, then the file name.
-	sed --quiet --regexp-extended 's/^([^:]+):(.+)$/\2\t\1/p' |
-	# Sort articles by date.
-	sort |
-	# Reformat to just the file names.
-	cut --fields=2 |
+	# Sort articles by date (skipping the first field).
+	sort +1 |
 	# Get the last (i.e. most recent) posts for the RSS feed.
 	tail -5 |
+	# Reformat to just the file names.
+	cut --fields=1 --delimiter=: |
 	# Convert paths so we operate on the generated HTML, not the unformatted Markdown.
 	sed "s|^$SOURCE_PATH|$OUTPUT_PATH|" |
 	sed 's|.md$|.html|' |
