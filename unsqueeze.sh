@@ -1,37 +1,27 @@
 #!/usr/bin/env sh
 
-SITE_PATH=$1
+export SITE_PATH=$1
 
-OUTPUT_PATH="$SITE_PATH/output"
-SOURCE_PATH="$SITE_PATH/source"
+export OUTPUT_PATH="$SITE_PATH/output"
+export SOURCE_PATH="$SITE_PATH/source"
 
-# Copy everything that's not Markdown or HTML.
+# Copy everything that's not HTML.
 # Excludes the RSS folder, which we create ourselves upon generation.
 # This will also create the folder structure for the destination Markdown files.
-rsync --archive --delete --verbose --exclude "*.html" --exclude "*.md" --exclude "feeds" "$OUTPUT_PATH/" "$SOURCE_PATH/"
+rsync --archive --delete --verbose \
+       --exclude "*.html" --exclude "feeds" \
+       "$OUTPUT_PATH/" "$SOURCE_PATH/"
 
-# Delete any Markdown files for which the output was removed.
-find "$SOURCE_PATH" -type f -name "*.md" |
-	while read -r file; do
-		OLD_PATH=$(echo "$file" |
-			sed "s|^$SOURCE_PATH|$OUTPUT_PATH|" |
-			sed 's|.md$|.html|')
-		[ ! -f "$OLD_PATH" ] && rm "$file"
-	done
+# Parse and create all the Markdown files.
+find "$OUTPUT_PATH" -type f -name "*.html" -print0 |
+	sed "s|$OUTPUT_PATH/||g" |
+	sed "s|\.html||g" |
+	xargs --null --max-procs 99 -I % sh -c "echo \"%\" &&
+		swipl --traditional --quiet -l parse_entry.pl -g \"consult('$SITE_PATH/site.pl'), parse_entry('$OUTPUT_PATH/%.html').\" \
+		> \"$SOURCE_PATH/%.md\""
 
-# Parse and create all the markdown files.
-find "$OUTPUT_PATH" -type f -name "*.html" |
-	while read -r file; do
-		NEW_PATH=$(echo "$file" |
-			sed "s|^$OUTPUT_PATH|$SOURCE_PATH|" |
-			sed 's|.html$|.md|')
-		swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry('$file')." |
-			# Unsmarten the punctuation.
-			sed "s|&nbsp;| |g" |
-			sed "s|&#8216;|'|g" |
-			sed "s|&#8217;|'|g" |
-			sed "s|&#8220;|\"|g" |
-			sed "s|&#8221;|\"|g" \
-			> "$NEW_PATH"
-	done
-
+# Unsmarten the punctuation.
+find "$SOURCE_PATH" -type f -name "*.md" \
+	-exec sed -i "s/&nbsp;/ /g" {} + \
+	-exec sed -E -i "s/(&#39;|&#8216;|&#8217;|&rsquo;|&lsquo;)/'/g" {} + \
+	-exec sed -E -i "s/(&#8220;|&#8221;|&rdquo;|&ldquo;|&quot;)/\"/g" {} +
