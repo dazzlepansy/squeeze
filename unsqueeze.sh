@@ -13,10 +13,9 @@ rsync --archive --delete --verbose \
        "$OUTPUT_PATH/" "$SOURCE_PATH/"
 
 # Parse and create all the Markdown files.
-find "$OUTPUT_PATH" -type f -name "*.html" -print0 |
-	sed "s|$OUTPUT_PATH/||g" |
+find "$OUTPUT_PATH" -type f -name "*.html" -printf "%P\0" |
 	sed "s|\.html||g" |
-	xargs --null --max-procs 99 -I % sh -c "echo \"%\" &&
+	xargs --null --max-procs 99 -I % sh -c "echo '%' &&
 		swipl --traditional --quiet -l parse_entry.pl -g \"consult('$SITE_PATH/site.pl'), parse_entry('$OUTPUT_PATH/%.html').\" \
 		> \"$SOURCE_PATH/%.md\""
 

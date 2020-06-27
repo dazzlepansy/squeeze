@@ -12,10 +12,9 @@ rsync --archive --delete --verbose \
 	"$SOURCE_PATH/" "$OUTPUT_PATH/"
 
 # Parse and create all the HTML files.
-find "$SOURCE_PATH" -type f -name "*.md" -print0 |
-	sed "s|$SOURCE_PATH/||g" |
+find "$SOURCE_PATH" -type f -name "*.md" -printf "%P\0" |
 	sed "s|\.md||g" |
-	xargs --null --max-procs 99 -I % sh -c "echo \"%\" &&
+	xargs --null --max-procs 99 -I % sh -c "echo '%' &&
 		swipl --traditional --quiet -l parse_entry.pl -g \"consult('$SITE_PATH/site.pl'), generate_entry('$SOURCE_PATH/%.md').\" |
 		smartypants \
 		> \"$OUTPUT_PATH/%.html\""
