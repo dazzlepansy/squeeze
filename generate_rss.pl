@@ -4,7 +4,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :- include('helpers.pl').
-:- include('html.pl').
 :- include('rss.pl').
 
 % generate_rss(+BuildDate, +Filenames).

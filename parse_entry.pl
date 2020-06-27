@@ -4,7 +4,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :- include('helpers.pl').
-:- include('html.pl').
 :- include('markdown.pl').
 
 % Include files for dialect-dependent predicates.
