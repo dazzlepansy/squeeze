@@ -41,24 +41,25 @@ files_to_articles([Filename|Filenames], [article(Date, Title, Link, Description)
 	files_to_articles(Filenames, Articles).
 
 
-% get_link(?Filename, ?Link).
+% get_link(?Filename, ?Path).
 %	Calculate a file's URL, given its current path.
-get_link(Filename, Link):-
+get_link(Filename, LinkPath):-
 	atom_codes(Filename, FilenameCodes),
-	% Just assert that this is an index file before we go further.
-	% Backtracking after this point will take us down a rabbit hole.
-	append_lists(_, "index.html", FilenameCodes),
-	site_url(URL, []),
-	append_lists(_, "/output", StartPath),
-	append_lists(StartPath, Path, FilenameCodes),
-	append_lists(PathWithoutFile, "index.html", Path),
-	append_lists(URL, PathWithoutFile, Link).
+	file_path(RelativePath, FilenameCodes, []),
+	link_path(RelativePath, LinkPath, []).
 
-get_link(Filename, Link):-
-	atom_codes(Filename, FilenameCodes),
-	site_url(URL, []),
-	append_lists(_, "/output", StartPath),
-	append_lists(StartPath, Path, FilenameCodes),
-	append_lists(PathWithoutExtension, ".html", Path),
-	append_lists(PathWithoutExtension, "/", PathWithSlash),
-	append_lists(URL, PathWithSlash, Link).
+file_path(Path) -->
+	anything(_),
+	"/output",
+	anything(Path),
+	"/index.html".
+
+file_path(Path) -->
+	anything(_),
+	"/output",
+	anything(Path),
+	".html".
+
+link_path(RelativePath) -->
+	anything(RelativePath),
+	"/".

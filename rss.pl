@@ -49,14 +49,16 @@ item_description(Description) -->
 	Description,
 	"</description>".
 
-item_link(Link) -->
+item_link(Path) -->
 	"<link>",
-	Link,
+	site_url,
+	Path,
 	"</link>".
 
-item_guid(Link) -->
+item_guid(Path) -->
 	"<guid>",
-	Link,
+	site_url,
+	Path,
 	"</guid>".
 
 language -->
@@ -83,15 +85,15 @@ items([]) --> [].
 
 items([First|Rest]) --> item(First), items(Rest).
 
-item(article(Date, Title, Link, Description)) -->
+item(article(Date, Title, Path, Description)) -->
 	newline, tab, tab,
 	item_open,
 	newline, tab, tab, tab,
 	item_title(Title),
 	newline, tab, tab, tab,
-	item_link(Link),
+	item_link(Path),
 	newline, tab, tab, tab,
-	item_guid(Link),
+	item_guid(Path),
 	newline, tab, tab, tab,
 	item_description(Description),
 	newline, tab, tab, tab,
