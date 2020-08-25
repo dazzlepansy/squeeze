@@ -21,3 +21,21 @@ markdown_to_html(MarkdownEntryCodes, HTMLEntryCodes):-
 	close(StreamIn),
 	read_file(StreamOut, HTMLEntryCodes),
 	close(StreamOut).
+
+
+% GNU-Prolog-specific handling of dates.
+today(DateCodes):-
+	gnu_prolog,
+	date_time(dt(Year, Month, Day, Hour, Minute, Second)),
+	join([Year, '-', Month, '-', Day, ' ', Hour, ':', Minute, ':', Second], '', DateAtom),
+	atom_codes(DateAtom, DateCodes).
+
+% Format a date as RFC 822 (with a four-digit year).
+format_date(FormattedDateCodes, DateCodes):-
+	gnu_prolog,
+	atom_codes(DateAtom, DateCodes),
+	join(['--date="', DateAtom, '"'], '', Arg),
+	join(['date', Arg, '--rfc-email'], ' ', Command),
+	exec(Command, _, StreamOut, _),
+	read_file(StreamOut, FormattedDateCodes),
+	close(StreamOut).

@@ -31,7 +31,6 @@ ARTICLES=$(grep --recursive --include "*.md" "^Date: " "$SOURCE_PATH" |
 	# Glue the file names together to be passed to Prolog.
 	paste --serial --delimiters ',' - |
 	sed "s|,|','|g")
-BUILD_DATE=$(date +"%Y-%m-%d %T")
 # Parse the articles and generate the RSS.
-swipl --traditional --quiet -l generate_rss.pl -g "consult('$SITE_PATH/site.pl'), generate_rss(\"$BUILD_DATE\", ['$ARTICLES'])." \
+swipl --traditional --quiet -l generate_rss.pl -g "consult('$SITE_PATH/site.pl'), generate_rss(['$ARTICLES'])." \
 	> "$OUTPUT_PATH/feeds/rss.xml"

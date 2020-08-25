@@ -8,6 +8,8 @@
 
 % Include files for dialect-dependent predicates.
 :- discontiguous(markdown_to_html/2).
+:- discontiguous(format_date/2).
+:- discontiguous(today/1).
 :- include('dialects/gnu-prolog.pl').
 :- include('dialects/swi-prolog.pl').
 
