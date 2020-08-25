@@ -5,12 +5,13 @@
 
 % read_file(+Stream, -Codes).
 %	Read a file to a list of character codes.
-read_file(Stream, []):-
-	at_end_of_stream(Stream).
-
-read_file(Stream, [Code|Rest]):-
-	\+ at_end_of_stream(Stream),
+read_file(Stream, Codes):-
 	get_code(Stream, Code),
+	read_file_next(Code, Stream, Codes).
+
+read_file_next(-1, _, []).
+
+read_file_next(Code, Stream, [Code|Rest]):-
 	read_file(Stream, Rest).
 
 
@@ -50,7 +51,7 @@ join([], _, '').
 join([A], _, A).
 
 join([First|Rest], Separator, Result):-
-	join(Rest, End),
+	join(Rest, Separator, End),
 	atom_concat(First, Separator, FirstPlusSeparator),
 	atom_concat(FirstPlusSeparator, End, Result).
 
