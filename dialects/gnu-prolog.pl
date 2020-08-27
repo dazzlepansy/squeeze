@@ -24,11 +24,12 @@ markdown_to_html(MarkdownEntryCodes, HTMLEntryCodes):-
 
 
 % GNU-Prolog-specific handling of dates.
-today(DateCodes):-
+today(FormattedDateCodes):-
 	gnu_prolog,
 	date_time(dt(Year, Month, Day, Hour, Minute, Second)),
 	join([Year, '-', Month, '-', Day, ' ', Hour, ':', Minute, ':', Second], '', DateAtom),
-	atom_codes(DateAtom, DateCodes).
+	atom_codes(DateAtom, DateCodes),
+	format_date(FormattedDateCodes, DateCodes).
 
 % Format a date as RFC 822 (with a four-digit year).
 format_date(FormattedDateCodes, DateCodes):-
