@@ -29,6 +29,24 @@ generate_rss(Filenames):-
 	write_codes(user_output, RSSCodes),
 	halt.
 
+% generate_rss.
+%       Alternative interface to generate_rss(+Filenames) that reads
+%       the list of files from stdin. This allows the filenames to be piped
+%       from the output of another command like grep.
+generate_rss:-
+	read_file(user_input, FileListCodes),
+	file_list(FileList, FileListCodes, []),
+	generate_rss(FileList).
+
+
+file_list([]) --> [].
+
+file_list([File|FileList]) -->
+	anything(FileCodes),
+	newline,
+	file_list(FileList),
+	{ atom_codes(File, FileCodes) }.
+
 
 % files_to_articles(+Filenames, -Articles).
 %	Read in each file as an article predicate.
