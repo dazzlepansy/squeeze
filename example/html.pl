@@ -185,7 +185,7 @@ article_subtitle(ArticleSubtitle) -->
 article_meta(ArticleDate) -->
 	"<div class=\"entry-meta\">",
 	newline, tab, tab, tab,
-	"<time datetime=\"",
+	"<time id=\"article-date\" datetime=\"",
 	anything(ArticleDate),
 	"\">",
 	anything(ArticleDate),
