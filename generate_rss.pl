@@ -50,7 +50,7 @@ file_list([File|FileList]) -->
 %	Read in each file as an article predicate.
 files_to_articles([], []).
 
-files_to_articles([Filename|Filenames], [article(FormattedDate, Title, Link, Description)|Articles]):-
+files_to_articles([Filename|Filenames], [article(FormattedDate, FormattedTitle, Link, Description)|Articles]):-
 	open(Filename, read, Stream),
 	read_file(Stream, HTML),
 	close(Stream),
@@ -64,6 +64,13 @@ files_to_articles([Filename|Filenames], [article(FormattedDate, Title, Link, Des
 	replace("&", "&amp;", Entry, EntryAmp),
 	replace("<", "&lt;", EntryAmp, EntryLT),
 	replace(">", "&gt;", EntryLT, Description),
+	% Strip HTML entities from the title.
+	replace("&amp;", "&", Title, TitleAmp),
+	replace("&lsquo;", "'", TitleAmp, TitleLSQuo),
+	replace("&rsquo;", "'", TitleLSQuo, TitleRSQuo),
+	replace("&ldquo;", "\"", TitleRSQuo, TitleLDQuo),
+	replace("&rdquo;", "\"", TitleLDQuo, TitleRDQuo),
+	replace("&hellip;", "...", TitleRDQuo, FormattedTitle),
 	files_to_articles(Filenames, Articles).
 
 
