@@ -64,13 +64,15 @@ files_to_articles([Filename|Filenames], [article(FormattedDate, FormattedTitle, 
 	replace("&", "&amp;", Entry, EntryAmp),
 	replace("<", "&lt;", EntryAmp, EntryLT),
 	replace(">", "&gt;", EntryLT, Description),
-	% Strip HTML entities from the title.
-	replace("&amp;", "&", Title, TitleAmp),
-	replace("&lsquo;", "'", TitleAmp, TitleLSQuo),
-	replace("&rsquo;", "'", TitleLSQuo, TitleRSQuo),
-	replace("&ldquo;", "\"", TitleRSQuo, TitleLDQuo),
-	replace("&rdquo;", "\"", TitleLDQuo, TitleRDQuo),
-	replace("&hellip;", "...", TitleRDQuo, FormattedTitle),
+	% Convert named HTML entities to numeric entities in the title.
+	% Named entities don't work because they're not defined,
+	% but numeric ones are fine.
+	replace("&amp;", "&#38;", Title, TitleAmp),
+	replace("&lsquo;", "&#8216;", TitleAmp, TitleLSQuo),
+	replace("&rsquo;", "&#8217;", TitleLSQuo, TitleRSQuo),
+	replace("&ldquo;", "&#8220;", TitleRSQuo, TitleLDQuo),
+	replace("&rdquo;", "&#8221;", TitleLDQuo, TitleRDQuo),
+	replace("&hellip;", "&#8230;", TitleRDQuo, FormattedTitle),
 	files_to_articles(Filenames, Articles).
 
 
