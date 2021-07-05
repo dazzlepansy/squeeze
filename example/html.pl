@@ -4,25 +4,25 @@
 %	This is basically your static website's template.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-page(Entry, Title, Subtitle, Date) -->
+page(Entry, Title, Subtitle, Date, CleanTitle) -->
 	doctype,
 	newline,
-	html(Entry, Title, Subtitle, Date),
+	html(Entry, Title, Subtitle, Date, CleanTitle),
 	newline.
 
-html(Entry, Title, Subtitle, Date) -->
+html(Entry, Title, Subtitle, Date, CleanTitle) -->
 	html_open,
 	newline,
-	head(Title),
+	head(CleanTitle),
 	newline,
 	body(Entry, Title, Subtitle, Date),
 	newline,
 	html_close.
 
-head(Title) -->
+head(CleanTitle) -->
 	head_open,
 	newline, tab,
-	title(Title),
+	title(CleanTitle),
 	newline, tab,
 	meta,
 	newline, tab,
@@ -123,9 +123,9 @@ title(null) -->
 	site_subtitle,
 	"</title>".
 
-title(Title) -->
+title(CleanTitle) -->
 	"<title>",
-	anything(Title),
+	anything(CleanTitle),
 	"</title>".
 
 styles -->

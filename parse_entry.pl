@@ -31,7 +31,7 @@ parse_entry(Filename):-
 % parse_html(+HTML).
 %	Parse HTML into a Markdown file and write to stdout.
 parse_html(HTML):-
-	page(EntryCodes, Title, Subtitle, Date, HTML, []),
+	page(EntryCodes, Title, Subtitle, Date, _, HTML, []),
 	markdown(EntryCodes, Title, Subtitle, Date, MarkdownCodes, []),
 	write_codes(user_output, MarkdownCodes),
 	halt.
@@ -57,6 +57,17 @@ generate_entry(Filename):-
 generate_html(Markdown):-
 	markdown(EntryCodes, Title, Subtitle, Date, Markdown, []),
 	markdown_to_html(EntryCodes, HTMLEntryCodes),
-	page(HTMLEntryCodes, Title, Subtitle, Date, HTMLCodes, []),
+	clean_title(Title, CleanTitle),
+	page(HTMLEntryCodes, Title, Subtitle, Date, CleanTitle, HTMLCodes, []),
 	write_codes(user_output, HTMLCodes),
 	halt.
+
+
+% clean_title(+Title, -CleanTitle).
+% 	Replace select HTML tags in an entry title to make it suitable
+% 	for an HTML title.
+clean_title(null, null).
+
+clean_title(Title, CleanTitle):-
+	replace("<cite>", "&#8220;", Title, Title1),
+	replace("</cite>", "&#8221;", Title1, CleanTitle).
