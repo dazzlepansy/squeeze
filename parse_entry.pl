@@ -69,5 +69,5 @@ generate_html(Markdown):-
 clean_title(null, null).
 
 clean_title(Title, CleanTitle):-
-	replace("<cite>", "&#8220;", Title, Title1),
-	replace("</cite>", "&#8221;", Title1, CleanTitle).
+	replace("<cite>", "\"", Title, Title1),
+	replace("</cite>", "\"", Title1, CleanTitle).
