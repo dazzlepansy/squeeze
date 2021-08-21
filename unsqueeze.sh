@@ -17,8 +17,17 @@ rsync --archive --delete --verbose \
        "$OUTPUT_PATH/" "$SOURCE_PATH/"
 
 # Parse and create all the Markdown files.
-find "$OUTPUT_PATH" -type f -name "*.html" \
-       -exec ./generate_markdown.sh "$SITE_PATH" {} +
+find "$OUTPUT_PATH" -type f -name "*.html" |
+	sed "s|$SITE_PATH/output/||g" |
+	while IFS= read -r file; do
+		echo "$file"
+	
+		swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry('$SITE_PATH/output/$file')." \
+			> "$SITE_PATH/source/${file%%.html}.md" &
+	done
+
+# Wait until all jobs have completed.
+wait
 
 # Unsmarten the punctuation.
 MARKDOWN_FILES="$(find "$SOURCE_PATH" -type f -name "*.md")"

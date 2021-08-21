@@ -16,8 +16,25 @@ rsync --archive --delete --verbose \
 	"$SOURCE_PATH/" "$OUTPUT_PATH/"
 
 # Parse and create all the HTML files.
-find "$SOURCE_PATH" -type f -name "*.md" \
-       -exec ./generate_html_list.sh "$SITE_PATH" {} +
+find "$SOURCE_PATH" -type f -name "*.md" |
+	sed "s|$SITE_PATH/source/||g" |
+	while IFS= read -r file; do
+		echo "$file"
+
+		swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry('$SITE_PATH/source/$file')." |
+			# Unwrap block-level elements that have erroneously been wrapped in <p> tags.
+			sed "s|<p><details|<details|g" |
+			sed "s|</summary></p>|</summary>|g" |
+			sed "s|<p></details></p>|</details>|g" |
+			sed "s|<p><figure|<figure|g" |
+			sed "s|</figure></p>|</figure>|g" |
+			# Smarten punctuation.
+			smartypants \
+			> "$SITE_PATH/output/${file%%.md}.html" &
+	done
+
+# Wait until all jobs have completed.
+wait
 
 # Generate the RSS feed.
 mkdir -p "$OUTPUT_PATH/feeds"
