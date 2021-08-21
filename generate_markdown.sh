@@ -1,6 +1,15 @@
 #!/usr/bin/env sh
 
-echo "$1"
+SITE_PATH="$1"
+shift
 
-swipl --traditional --quiet -l parse_entry.pl -g "consult('$2/site.pl'), parse_entry('$2/output/$1')." \
-	> "$2/source/${1%%.html}.md"
+ARGS="$(echo "$@" | sed "s|$SITE_PATH/output/||g")"
+
+for arg in $ARGS; do
+	echo "$arg"
+	
+	swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry('$SITE_PATH/output/$arg')." \
+		> "$SITE_PATH/source/${arg%%.html}.md" &
+done
+
+wait

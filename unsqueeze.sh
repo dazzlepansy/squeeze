@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+# Ungenerate a static website.
+
+# Usage: unsqueeze.sh SITE_PATH
+
 export SITE_PATH=$1
 
 export OUTPUT_PATH="$SITE_PATH/output"
@@ -13,11 +17,24 @@ rsync --archive --delete --verbose \
        "$OUTPUT_PATH/" "$SOURCE_PATH/"
 
 # Parse and create all the Markdown files.
-find "$OUTPUT_PATH" -type f -name "*.html" -printf "%P\0" |
-	xargs --null --max-procs 99 -I % sh generate_markdown.sh "%" "$SITE_PATH"
+find "$OUTPUT_PATH" -type f -name "*.html" \
+       -exec ./generate_markdown.sh "$SITE_PATH" {} +
 
 # Unsmarten the punctuation.
-find "$SOURCE_PATH" -type f -name "*.md" \
-	-exec sed -i "s/&nbsp;/ /g" {} + \
-	-exec sed -E -i "s/(&#39;|&#8216;|&#8217;|&rsquo;|&lsquo;)/'/g" {} + \
-	-exec sed -E -i "s/(&#8220;|&#8221;|&rdquo;|&ldquo;|&quot;)/\"/g" {} +
+MARKDOWN_FILES="$(find "$SOURCE_PATH" -type f -name "*.md")"
+for markdown_file in $MARKDOWN_FILES; do
+	sed "s/&nbsp;/ /g" "$markdown_file" |
+	# Replace single quotes.
+	sed "s/&#39;/'/g" |
+	sed "s/&#8216;/'/g" |
+	sed "s/&#8217;/'/g" |
+	sed "s/&rsquo;/'/g" |
+	sed "s/&lsquo;/'/g" |
+	# Replace double quotes.
+	sed "s/&#8220;/\"/g" |
+	sed "s/&#8221;/\"/g" |
+	sed "s/&rdquo;/\"/g" |
+	sed "s/&ldquo;/\"/g" |
+	sed "s/&quot;/\"/g" \
+	> "$markdown_file"
+done

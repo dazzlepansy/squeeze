@@ -1,8 +1,16 @@
 #!/usr/bin/env sh
 
-echo "$1"
+# Convert a Markdown file to HTML using a site's template.
 
-swipl --traditional --quiet -l parse_entry.pl -g "consult('$2/site.pl'), generate_entry('$2/source/$1')." |
+# Usage: generate_html.sh SITE_PATH MARKDOWN_FILE
+#
+# MARKDOWN_FILE is expected to be found at SITE_PATH/source/MARKDOWN_FILE.
+# The resulting HTML will be saved to SITE_PATH/output/HTML_FILE, where
+# HTML_FILE is the same filename as MARKDOWN_FILE but with a .html extension.
+
+echo "$2"
+
+swipl --traditional --quiet -l parse_entry.pl -g "consult('$1/site.pl'), generate_entry('$1/source/$2')." |
 	# Unwrap block-level elements that have erroneously been wrapped in <p> tags.
 	sed "s|<p><details|<details|g" |
 	sed "s|</summary></p>|</summary>|g" |
@@ -11,4 +19,4 @@ swipl --traditional --quiet -l parse_entry.pl -g "consult('$2/site.pl'), generat
 	sed "s|</figure></p>|</figure>|g" |
 	# Smarten punctuation.
 	smartypants \
-	> "$2/output/${1%%.md}.html"
+	> "$1/output/${2%%.md}.html"
