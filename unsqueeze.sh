@@ -22,28 +22,23 @@ find "$OUTPUT_PATH" -type f -name "*.html" |
 	while IFS= read -r file; do
 		echo "$file"
 	
-		swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry('$SITE_PATH/output/$file')." \
+		swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry('$SITE_PATH/output/$file')." |
+			# Unsmarten the punctuation.
+			sed 's/&nbsp;/ /g' |
+			# Replace single quotes.
+			sed "s/&#39;/'/g" |
+			sed "s/&#8216;/'/g" |
+			sed "s/&#8217;/'/g" |
+			sed "s/&rsquo;/'/g" |
+			sed "s/&lsquo;/'/g" |
+			# Replace double quotes.
+			sed 's/&#8220;/"/g' |
+			sed 's/&#8221;/"/g' |
+			sed 's/&rdquo;/"/g' |
+			sed 's/&ldquo;/"/g' |
+			sed 's/&quot;/"/g' \
 			> "$SITE_PATH/source/${file%%.html}.md" &
 	done
 
 # Wait until all jobs have completed.
 wait
-
-# Unsmarten the punctuation.
-MARKDOWN_FILES="$(find "$SOURCE_PATH" -type f -name "*.md")"
-for markdown_file in $MARKDOWN_FILES; do
-	sed "s/&nbsp;/ /g" "$markdown_file" |
-	# Replace single quotes.
-	sed "s/&#39;/'/g" |
-	sed "s/&#8216;/'/g" |
-	sed "s/&#8217;/'/g" |
-	sed "s/&rsquo;/'/g" |
-	sed "s/&lsquo;/'/g" |
-	# Replace double quotes.
-	sed "s/&#8220;/\"/g" |
-	sed "s/&#8221;/\"/g" |
-	sed "s/&rdquo;/\"/g" |
-	sed "s/&ldquo;/\"/g" |
-	sed "s/&quot;/\"/g" \
-	> "$markdown_file"
-done
