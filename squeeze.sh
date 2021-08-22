@@ -35,6 +35,12 @@ find "$SOURCE_PATH" -type f -name "*.md" |
 
 # Wait until all jobs have completed.
 wait
+# The `wait` command doesn't seem to wait for all the running jobs.
+# Maybe it's stopping after all `swipl` processes complete?
+# This hack just checks to see if any sed or smartypants processes are running.
+while [ $(ps -A | grep -c -e " sed$" -e " smartypants$") -gt 0 ]; do
+	sleep 1
+done
 
 # Generate the RSS feed.
 mkdir -p "$OUTPUT_PATH/feeds"
