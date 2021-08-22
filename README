@@ -17,7 +17,7 @@ use the same code both to un-generate and re-generate the website.
 
 So the skinny is I wound up writing my own static website generator in Prolog.
 Well, the main components are in Prolog. I also wrote a shell script to make
-use of a bunch of common \*nix utilities (find, sed, grep, etc.) and to pipe
+use of a bunch of common POSIX utilities (find, sed, grep, etc.) and to pipe
 output to some third-party programs where I needed them (Markdown and
 SmartyPants). Weirdest bit was that I just couldn't find anything decent to
 generate RSS feeds. I considered dropping the RSS all together, but I've spent
@@ -32,7 +32,11 @@ config values in `site.pl` and define your template in `html.pl`.
 
 ## Dependencies
 
-* A POSIX shell. Used to run the script that automates everything else.
+* A POSIX shell. Used to run the script that automates everything else. Both
+  the shell scripts and the utilities invoked are strictly POSIX compliant to
+  ensure maximum portability.
+* [rsync](https://rsync.samba.org/). Used to copy, update, and delete all
+  non-Markdown/HTML assets.
 * A Prolog interpreter. Tested with [SWI-Prolog](https://www.swi-prolog.org/)
   and [GNU Prolog](http://www.ohloh.net/p/gprolog), but the syntax aims to be
   vanilla ISO Prolog and should work with any implementation.
