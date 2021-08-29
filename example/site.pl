@@ -11,5 +11,3 @@ site_url --> "https://www.example.com".
 user_email --> "webmaster@example.com".
 
 user_name --> "Harold Gruntfuttock".
-
-markdown_command(['/usr/bin/hoedown', '--footnotes']).

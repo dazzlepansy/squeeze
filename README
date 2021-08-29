@@ -40,7 +40,7 @@ config values in `site.pl` and define your template in `html.pl`.
 * A Prolog interpreter. Tested with [SWI-Prolog](https://www.swi-prolog.org/)
   and [GNU Prolog](http://www.ohloh.net/p/gprolog), but the syntax aims to be
   vanilla ISO Prolog and should work with any implementation.
-* [Markdown](https://daringfireball.net/projects/markdown/). Used to convert
+* [Python-Markdown](https://python-markdown.github.io/). Used to convert
   Markdown to HTML.
 * [SmartyPants](https://daringfireball.net/projects/smartypants/). Used to
   smarten the punctuation in the HTML output.
@@ -71,14 +71,3 @@ Generate a static website from Markdown sources:
 Generate source files from a static website:
 
 	./unsqueeze.sh /home/user/website
-
-## Notes
-
-The Markdown converter is called from inside Prolog, so the path to your
-Markdown (and any arguments) is specified in `site.pl`. This allows you to
-have different Markdown converters or arguments on a per-site basis.
-
-Because ISO Prolog doesn't support making calls to external programs, I've
-implemented a compatibility layer that allows you to define the
-`markdown_to_html` predicate for whatever dialect of Prolog you happen to use.
-Included are compatibility predicates for SWI-Prolog and GNU Prolog.

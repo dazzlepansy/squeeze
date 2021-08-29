@@ -7,7 +7,6 @@
 :- include('markdown.pl').
 
 % Include files for dialect-dependent predicates.
-:- discontiguous(markdown_to_html/2).
 :- discontiguous(format_date/2).
 :- discontiguous(today/1).
 :- include('dialects/gnu-prolog.pl').
@@ -56,9 +55,8 @@ generate_entry(Filename):-
 %	Parse Markdown into an HTML file and write to stdout.
 generate_html(Markdown):-
 	markdown(EntryCodes, Title, Subtitle, Date, Markdown, []),
-	markdown_to_html(EntryCodes, HTMLEntryCodes),
 	clean_title(Title, CleanTitle),
-	page(HTMLEntryCodes, Title, Subtitle, Date, CleanTitle, HTMLCodes, []),
+	page(EntryCodes, Title, Subtitle, Date, CleanTitle, HTMLCodes, []),
 	write_codes(user_output, HTMLCodes),
 	halt.
 

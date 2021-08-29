@@ -21,7 +21,21 @@ find "$SOURCE_PATH" -type f -name "*.md" |
 	while IFS= read -r file; do
 		echo "$file"
 
-		swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry('$SITE_PATH/source/$file')." |
+		# Get everything after the metadata.
+		if head -n 1 "$SOURCE_PATH/$file" | grep -q "^[A-Za-z]*: "; then
+			HEADERS="$(sed '/^$/q' "$SOURCE_PATH/$file")"
+			MARKDOWN="$(sed '1,/^$/d' "$SOURCE_PATH/$file")"
+		else
+			HEADERS=""
+			MARKDOWN="$(cat "$SOURCE_PATH/$file")"
+		fi
+
+		printf '%s' "$MARKDOWN" |
+			# Convert Markdown to HTML.
+			markdown_py --extension footnotes --extension md_in_html --extension smarty --quiet --output_format xhtml |
+			# Recombine with the metadata and hand it to Prolog.
+			([ ! -z "$HEADERS" ] && printf '%s\n\n' "$HEADERS" ; cat) |
+			swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." |
 			# Unwrap block-level elements that have erroneously been wrapped in <p> tags.
 			sed "s|<p><details|<details|g" |
 			sed "s|</summary></p>|</summary>|g" |
