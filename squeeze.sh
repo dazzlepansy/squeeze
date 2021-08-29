@@ -62,5 +62,5 @@ find "$OUTPUT_PATH" -type f -name "*.html" \
 	# Reformat to just the file names.
 	cut -f 1 -d : |
 	# Parse the articles and generate the RSS.
-	swipl --traditional --quiet -l generate_rss.pl -g "consult('$SITE_PATH/site.pl'), generate_rss." \
+	swipl --traditional --quiet -l generate_rss.pl -g "consult('$SITE_PATH/site.pl'), generate_rss(\"$(date '+%a, %d %b %Y %T %Z')\")." \
 	> "$OUTPUT_PATH/feeds/rss.xml"

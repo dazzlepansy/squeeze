@@ -6,22 +6,13 @@
 :- include('helpers.pl').
 :- include('rss.pl').
 
-% Include files for dialect-dependent predicates.
-:- discontiguous(markdown_to_html/2).
-:- discontiguous(format_date/2).
-:- discontiguous(today/1).
-:- include('dialects/gnu-prolog.pl').
-:- include('dialects/swi-prolog.pl').
-
 % generate_rss(+Filenames).
 %	Filenames is a list of atoms containing paths to all Markdown files with a date.
 %	These files will be read and used to generate an RSS of the most
 %	recent posts.
-generate_rss(Filenames):-
+generate_rss(Filenames, BuildDate):-
 	% Read in all the files so we have their dates and contents.
 	files_to_articles(Filenames, Articles),
-	% Get the build date.
-	today(BuildDate),
 	% Convert to RSS and write to stdout.
 	rss(BuildDate, Articles, RSSCodes, []),
 	write_codes(user_output, RSSCodes),
@@ -31,10 +22,10 @@ generate_rss(Filenames):-
 %       Alternative interface to generate_rss(+Filenames) that reads
 %       the list of files from stdin. This allows the filenames to be piped
 %       from the output of another command like grep.
-generate_rss:-
+generate_rss(BuildDate):-
 	read_file(user_input, FileListCodes),
 	file_list(FileList, FileListCodes, []),
-	generate_rss(FileList).
+	generate_rss(FileList, BuildDate).
 
 
 file_list([]) --> [].

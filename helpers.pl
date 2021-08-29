@@ -56,6 +56,74 @@ join([First|Rest], Separator, Result):-
 	atom_concat(FirstPlusSeparator, End, Result).
 
 
+% format_date(-RFCDate, +Date).
+%   Parse and format a date according to RFC 822.
+format_date(RFCDate, Date):-
+	date_stamp(YearCodes, MonthCodes, DayCodes, Date, []),
+	number_codes(Year, YearCodes),
+	number_codes(Month, MonthCodes),
+	number_codes(Day, DayCodes),
+	day_of_week(date(Year, Month, Day), DayOfWeek),
+	day(DayOfWeek, DayOfWeekNameCodes),
+	month(Month, MonthNameCodes, _),
+	rfc_822(YearCodes, MonthNameCodes, DayCodes, DayOfWeekNameCodes, RFCDate, []).
+
+% TODO: Implement support for other date formats.
+% Currently we support YYYY-MM-DD.
+date_stamp(YearCodes, MonthCodes, DayCodes) -->
+	anything(YearCodes),
+	"-",
+	anything(MonthCodes),
+	"-",
+	anything(DayCodes).
+
+rfc_822(YearCodes, MonthNameCodes, DayCodes, DayOfWeekNameCodes) -->
+	anything(DayOfWeekNameCodes),
+	", ",
+	anything(DayCodes),
+	" ",
+	anything(MonthNameCodes),
+	" ",
+	anything(YearCodes),
+	" 00:00:00 GMT".
+
+day_of_week(date(Year, Month, Day), DayOfWeek):-
+	magic_year(Year, Month, MagicYear),
+	month(Month, _, MagicMonth),
+	DayOfWeek is (MagicYear + MagicYear // 4 - MagicYear // 100 + MagicYear // 400 + MagicMonth + Day) mod 7.
+
+magic_year(Year, Month, MagicYear):-
+	Month < 3,
+	MagicYear is Year - 1.
+
+magic_year(Year, _, Year).
+
+% month(?MonthNumber, ?ShortName, -MagicNumber).
+%   Magic numbers, used for calculating the day of the week,
+%   are as defined in Sakamoto's methods:
+%   https://en.wikipedia.org/wiki/Determination_of_the_day_of_the_week#Sakamoto's_methods
+month(1, "Jan", 0).
+month(2, "Feb", 3).
+month(3, "Mar", 2).
+month(4, "Apr", 5).
+month(5, "May", 0).
+month(6, "Jun", 3).
+month(7, "Jul", 5).
+month(8, "Aug", 1).
+month(9, "Sep", 4).
+month(10, "Oct", 6).
+month(11, "Nov", 2).
+month(12, "Dec", 4).
+
+day(0, "Sun").
+day(1, "Mon").
+day(2, "Tue").
+day(3, "Wed").
+day(4, "Thu").
+day(5, "Fri").
+day(6, "Sat").
+
+
 anything([]) --> [].
 
 anything([X|Rest]) --> [X], anything(Rest).

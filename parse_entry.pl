@@ -6,12 +6,6 @@
 :- include('helpers.pl').
 :- include('markdown.pl').
 
-% Include files for dialect-dependent predicates.
-:- discontiguous(format_date/2).
-:- discontiguous(today/1).
-:- include('dialects/gnu-prolog.pl').
-:- include('dialects/swi-prolog.pl').
-
 % parse_entry.
 %	Read in an HTML file from stdin.
 parse_entry:-
