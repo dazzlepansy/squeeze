@@ -21,20 +21,20 @@ find "$SOURCE_PATH" -type f -name "*.md" |
 	while IFS= read -r file ; do
 		echo "$file"
 
-		# Get everything after the metadata.
+		# Determine if this file has any metadata at the start.
+		# Metadata are in the format Key: value, so it's easy to detect.
 		if head -n 1 "$SOURCE_PATH/$file" | grep -q "^[A-Za-z]*: " ; then
-			HEADERS="$(sed '/^$/q' "$SOURCE_PATH/$file")"
-			MARKDOWN="$(sed '1,/^$/d' "$SOURCE_PATH/$file")"
+			HEADERS=1
 		else
-			HEADERS=""
-			MARKDOWN="$(cat "$SOURCE_PATH/$file")"
+	       		HEADERS=0
 		fi
 
-		printf '%s' "$MARKDOWN" |
+		# Get everything after the metadata.
+		([ "$HEADERS" -eq 1 ] && sed '1,/^$/d' || cat) < "$SOURCE_PATH/$file" |
 			# Convert Markdown to HTML.
 			markdown_py --extension footnotes --extension md_in_html --extension smarty --quiet --output_format xhtml |
 			# Recombine with the metadata and hand it to Prolog.
-			([ ! -z "$HEADERS" ] && printf '%s\n\n' "$HEADERS" ; cat) |
+			([ "$HEADERS" -eq 1 ] && sed '/^$/q' "$SOURCE_PATH/$file" ; cat) |
 			swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." |
 			# Unwrap block-level elements that have erroneously been wrapped in <p> tags.
 			sed 's|<p><details|<details|g' |
