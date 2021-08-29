@@ -19,7 +19,7 @@ rsync --archive --delete --verbose \
 # Parse and create all the Markdown files.
 find "$OUTPUT_PATH" -type f -name "*.html" |
 	sed "s|$SITE_PATH/output/||g" |
-	while IFS= read -r file; do
+	while IFS= read -r file ; do
 		echo "$file"
 	
 		swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry('$SITE_PATH/output/$file')." |

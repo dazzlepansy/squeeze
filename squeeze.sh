@@ -18,11 +18,11 @@ rsync --archive --delete --verbose \
 # Parse and create all the HTML files.
 find "$SOURCE_PATH" -type f -name "*.md" |
 	sed "s|$SITE_PATH/source/||g" |
-	while IFS= read -r file; do
+	while IFS= read -r file ; do
 		echo "$file"
 
 		# Get everything after the metadata.
-		if head -n 1 "$SOURCE_PATH/$file" | grep -q "^[A-Za-z]*: "; then
+		if head -n 1 "$SOURCE_PATH/$file" | grep -q "^[A-Za-z]*: " ; then
 			HEADERS="$(sed '/^$/q' "$SOURCE_PATH/$file")"
 			MARKDOWN="$(sed '1,/^$/d' "$SOURCE_PATH/$file")"
 		else
@@ -37,14 +37,14 @@ find "$SOURCE_PATH" -type f -name "*.md" |
 			([ ! -z "$HEADERS" ] && printf '%s\n\n' "$HEADERS" ; cat) |
 			swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), generate_entry." |
 			# Unwrap block-level elements that have erroneously been wrapped in <p> tags.
-			sed "s|<p><details|<details|g" |
-			sed "s|</summary></p>|</summary>|g" |
-			sed "s|<p></details></p>|</details>|g" |
-			sed "s|<p><figure|<figure|g" |
-			sed "s|</figure></p>|</figure>|g" |
+			sed 's|<p><details|<details|g' |
+			sed 's|</summary></p>|</summary>|g' |
+			sed 's|<p></details></p>|</details>|g' |
+			sed 's|<p><figure|<figure|g' |
+			sed 's|</figure></p>|</figure>|g' |
 			# Smarten punctuation.
 			smartypants \
-			> "$SITE_PATH/output/${file%%.md}.html" &
+			> "$OUTPUT_PATH/${file%%.md}.html" &
 	done
 
 # Wait until all jobs have completed.
