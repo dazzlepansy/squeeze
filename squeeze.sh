@@ -12,7 +12,11 @@ SOURCE_PATH="$SITE_PATH/source"
 # A space-separated list of all the process IDs we've started.
 proc_ids=""
 # Max number of processes to run at once.
-MAX_PROCESSES="$(nproc)"
+# There is no way to do `nproc` with only POSIX tools,
+# so the best way to make this portable is with fallbacks.
+MAX_PROCESSES="$(nproc 2>/dev/null ||
+	sysctl -n hw.ncpu 2>/dev/null ||
+	getconf _NPROCESSORS_ONLN 2>/dev/null)"
 
 # Copy everything that's not Markdown.
 # This will also create the folder structure for the destination Markdown files.
