@@ -9,6 +9,11 @@ SITE_PATH=$1
 OUTPUT_PATH="$SITE_PATH/output"
 SOURCE_PATH="$SITE_PATH/source"
 
+# A space-separated list of all the process IDs we've started.
+proc_ids=""
+# Max number of processes to run at once.
+MAX_PROCESSES="$(nproc)"
+
 # Copy everything that's not Markdown.
 # This will also create the folder structure for the destination Markdown files.
 rsync --archive --delete --verbose \
@@ -45,6 +50,16 @@ find "$SOURCE_PATH" -type f -name "*.md" |
 			# Smarten punctuation.
 			smartypants \
 			> "$OUTPUT_PATH/${file%%.md}.html" &
+
+		# Add the most recent process ID to the list.
+		proc_ids="$! $proc_ids"
+		# Pause while the number of created processes is greater than
+		# or equal to the max processes. We have to subtract one
+		# because the `ps` command always outputs a header that we
+		# don't want to count.
+		while [ "$(expr "$(ps -p "${proc_ids%% }" | wc -l)" - 1)" -ge "$MAX_PROCESSES" ] ; do
+			true
+		done
 	done
 
 # Wait until all jobs have completed.
