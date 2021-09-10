@@ -64,6 +64,9 @@ this repo.
 
 ## Use
 
+	squeeze.sh [-f|--force] site_path
+	unsqueeze.sh site_path
+
 Generate a static website from Markdown sources:
 
 	./squeeze.sh /home/user/website

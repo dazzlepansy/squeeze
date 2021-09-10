@@ -2,27 +2,27 @@
 
 # Ungenerate a static website.
 
-# Usage: unsqueeze.sh SITE_PATH
+# Usage: unsqueeze.sh site_path
 
-export SITE_PATH=$1
+export site_path=$1
 
-export OUTPUT_PATH="$SITE_PATH/output"
-export SOURCE_PATH="$SITE_PATH/source"
+export output_path="$site_path/output"
+export source_path="$site_path/source"
 
 # Copy everything that's not HTML.
 # Excludes the RSS folder, which we create ourselves upon generation.
 # This will also create the folder structure for the destination Markdown files.
 rsync --archive --delete --verbose \
        --exclude "*.html" --exclude "feeds" \
-       "$OUTPUT_PATH/" "$SOURCE_PATH/"
+       "$output_path/" "$source_path/"
 
 # Parse and create all the Markdown files.
-find "$OUTPUT_PATH" -type f -name "*.html" |
-	sed "s|$SITE_PATH/output/||g" |
+find "$output_path" -type f -name "*.html" |
+	sed "s|$output_path/||" |
 	while IFS= read -r file ; do
 		echo "$file"
 	
-		swipl --traditional --quiet -l parse_entry.pl -g "consult('$SITE_PATH/site.pl'), parse_entry('$SITE_PATH/output/$file')." |
+		swipl --traditional --quiet -l parse_entry.pl -g "consult('$site_path/site.pl'), parse_entry('$output_path/$file')." |
 			# Unsmarten the punctuation.
 			sed 's/&nbsp;/ /g' |
 			# Replace single quotes.
@@ -37,7 +37,7 @@ find "$OUTPUT_PATH" -type f -name "*.html" |
 			sed 's/&rdquo;/"/g' |
 			sed 's/&ldquo;/"/g' |
 			sed 's/&quot;/"/g' \
-			> "$SITE_PATH/source/${file%%.html}.md" &
+			> "$source_path/${file%.html}.md" &
 	done
 
 # Wait until all jobs have completed.
