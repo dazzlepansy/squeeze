@@ -95,7 +95,7 @@ find "$source_path" -type f -name "*.md" $find_test |
 		# or equal to the max processes. We have to subtract one
 		# because the `ps` command always outputs a header that we
 		# don't want to count.
-		while [ "$(expr "$(ps -p "${proc_ids%% }" | wc -l)" - 1)" -ge "$max_processes" ] ; do
+		while [ "$(expr "$(ps -p "${proc_ids%% }" | wc -l | tr -d -c '[:digit:]')" - 1)" -ge "$max_processes" ] ; do
 			true
 		done
 	done
