@@ -45,6 +45,6 @@ wait
 # The `wait` command doesn't seem to wait for all the running jobs.
 # Maybe it's stopping after all `swipl` processes complete?
 # This hack just checks to see if any sed processes are running.
-while [ $(ps -A | grep -c " sed$") -gt 0 ]; do
+while [ "$(ps -o comm | grep -c '^sed$')" -gt 0 ]; do
 	sleep 1
 done
