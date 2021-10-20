@@ -17,10 +17,15 @@ rsync --archive --delete --verbose \
        "$output_path/" "$source_path/"
 
 # Parse and create all the Markdown files.
-find "$output_path" -type f -name "*.html" |
+html_files="$(find "$output_path" -type f -name "*.html")"
+line_count="$(echo "$html_files" | wc -l | tr -d -c '[:digit:]')"
+index=0
+
+echo "$html_files" |
 	sed "s|$output_path/||" |
 	while IFS= read -r file ; do
 		echo "$file"
+		index="$(expr "$index" + 1)"
 	
 		swipl --traditional --quiet -l parse_entry.pl -g "consult('$site_path/site.pl'), parse_entry('$output_path/$file')." |
 			# Unsmarten the punctuation.
@@ -38,13 +43,8 @@ find "$output_path" -type f -name "*.html" |
 			sed 's/&ldquo;/"/g' |
 			sed 's/&quot;/"/g' \
 			> "$source_path/${file%.html}.md" &
-	done
 
-# Wait until all jobs have completed.
-wait
-# The `wait` command doesn't seem to wait for all the running jobs.
-# Maybe it's stopping after all `swipl` processes complete?
-# This hack just checks to see if any sed processes are running.
-while [ "$(ps -o comm | grep -c '^sed$')" -gt 0 ]; do
-	sleep 1
-done
+		# Wait until all jobs have completed.
+		[ "$index" -eq "$line_count" ] &&
+			wait
+	done

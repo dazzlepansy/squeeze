@@ -61,10 +61,15 @@ rsync --archive --delete --verbose \
 	"$source_path/" "$output_path/"
 
 # Parse and create all the HTML files.
-find "$source_path" -type f -name "*.md" $find_test |
+markdown_files="$(find "$source_path" -type f -name "*.md" $find_test)"
+line_count="$(echo "$markdown_files" | wc -l | tr -d -c '[:digit:]')"
+index=0
+
+echo "$markdown_files" |
 	sed "s|$source_path/||" |
 	while IFS= read -r file ; do
 		echo "$file"
+		index="$(expr "$index" + 1)"
 
 		# Determine if this file has any metadata at the start.
 		# Metadata are in the format Key: value, so it's easy to detect.
@@ -89,25 +94,19 @@ find "$source_path" -type f -name "*.md" $find_test |
 			smartypants \
 			> "$output_path/${file%.md}.html" &
 
-		# Add the most recent process ID to the list.
-		proc_ids="$! $proc_ids"
-		# Pause while the number of created processes is greater than
-		# or equal to the max processes. We have to subtract one
-		# because the `ps` command always outputs a header that we
-		# don't want to count.
-		while [ "$(ps -p "${proc_ids%% }" | tail -n +2 | wc -l | tr -d -c '[:digit:]')" -ge "$max_processes" ] ; do
-			true
-		done
+		if [ "$index" -eq "$line_count" ] ; then
+			# Wait until all jobs have completed.
+			wait
+		else
+			# Add the most recent process ID to the list.
+			proc_ids="$! $proc_ids"
+			# Pause while the number of created processes is greater than
+			# or equal to the max processes.
+			while [ "$(ps -p "${proc_ids%% }" | tail -n +2 | wc -l | tr -d -c '[:digit:]')" -ge "$max_processes" ] ; do
+				true
+			done
+		fi
 	done
-
-# Wait until all jobs have completed.
-wait
-# The `wait` command doesn't seem to wait for all the running jobs.
-# Maybe it's stopping after all `swipl` processes complete?
-# This hack just checks to see if any sed or smartypants processes are running.
-while [ "$(ps -o comm | grep -c -e '^sed$' -e '^smartypants$')" -gt 0 ]; do
-	sleep 1
-done
 
 # Generate the RSS feed.
 mkdir -p "${feed_path%/*}"
