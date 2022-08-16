@@ -29,9 +29,13 @@ proc_ids=""
 # Max number of processes to run at once.
 # There is no way to do `nproc` with only POSIX tools,
 # so the best way to make this portable is with fallbacks.
-max_processes="$(nproc 2>/dev/null ||
+# `nproc` itself isn't even universal on Linux, so the safest
+# place to get the number of processors on Linux is /proc/cpuinfo.
+max_processes="$(
+	grep -c ^processor /proc/cpuinfo ||
 	sysctl -n hw.ncpu 2>/dev/null ||
-	getconf _NPROCESSORS_ONLN 2>/dev/null)"
+	getconf _NPROCESSORS_ONLN 2>/dev/null
+)"
 
 # Regenerate everything if the force flag has been used or there is
 # no RSS file, but otherwise only regenerate Markdown files that have
