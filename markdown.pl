@@ -6,40 +6,33 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 markdown(Entry, Title, Subtitle, Date) -->
-	"Title: ",
-	anything(Title),
-	newline,
-	"Subtitle: ",
-	anything(Subtitle),
-	newline,
-	"Date: ",
-	anything(Date),
-	newline, newline,
-	anything(Entry).
-
-markdown(Entry, Title, null, Date) -->
-	"Title: ",
-	anything(Title),
-	newline,
-	"Date: ",
-	anything(Date),
-	newline, newline,
-	anything(Entry).
-
-markdown(Entry, Title, Subtitle, null) -->
-	"Title: ",
-	anything(Title),
-	newline,
-	"Subtitle: ",
-	anything(Subtitle),
-	newline, newline,
-	anything(Entry).
-
-markdown(Entry, Title, null, null) -->
-	"Title: ",
-	anything(Title),
+	metadata_block(Title, Subtitle, Date),
 	newline, newline,
 	anything(Entry).
 
 markdown(Entry, null, null, null) -->
 	anything(Entry).
+
+
+metadata_block(Title, Subtitle, Date) -->
+	metadata(Title, Subtitle, Date),
+	newline,
+	metadata_block(Title, Subtitle, Date).
+
+metadata_block(Title, Subtitle, Date) -->
+	metadata(Title, Subtitle, Date).
+
+
+metadata(Title, _, _) -->
+	"Title: ",
+	anything(Title).
+
+metadata(_, Subtitle, _) -->
+	"Subtitle: ",
+	anything(Subtitle).
+
+metadata(_, _, Date) -->
+	"Date: ",
+	anything(Date).
+
+metadata(null, null, null) --> [].
