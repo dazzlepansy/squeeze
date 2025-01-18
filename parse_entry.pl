@@ -24,8 +24,8 @@ parse_entry(Filename):-
 % parse_html(+HTML).
 %	Parse HTML into a Markdown file and write to stdout.
 parse_html(HTML):-
-	page(EntryCodes, Title, Subtitle, Date, _, HTML, []),
-	markdown(EntryCodes, Title, Subtitle, Date, MarkdownCodes, []),
+	page(EntryCodes, Title, Subtitle, Date, Breadcrumb, _, HTML, []),
+	markdown(EntryCodes, Title, Subtitle, Date, Breadcrumb, MarkdownCodes, []),
 	write_codes(user_output, MarkdownCodes),
 	halt.
 
@@ -48,9 +48,9 @@ generate_entry(Filename):-
 % generate_html(Markdown).
 %	Parse Markdown into an HTML file and write to stdout.
 generate_html(Markdown):-
-	markdown(EntryCodes, Title, Subtitle, Date, Markdown, []),
+	markdown(EntryCodes, Title, Subtitle, Date, Breadcrumb, Markdown, []),
 	clean_title(Title, CleanTitle),
-	page(EntryCodes, Title, Subtitle, Date, CleanTitle, HTMLCodes, []),
+	page(EntryCodes, Title, Subtitle, Date, Breadcrumb, CleanTitle, HTMLCodes, []),
 	write_codes(user_output, HTMLCodes),
 	halt.
 

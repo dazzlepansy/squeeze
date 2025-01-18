@@ -5,34 +5,36 @@
 %	or they may have a Title, Subtitle, and Date (all optional, but in that order).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-markdown(Entry, Title, Subtitle, Date) -->
-	metadata_block(Title, Subtitle, Date),
+markdown(Entry, Title, Subtitle, Date, Breadcrumb) -->
+	metadata_block(Title, Subtitle, Date, Breadcrumb),
 	newline, newline,
 	anything(Entry).
 
-markdown(Entry, null, null, null) -->
+markdown(Entry, null, null, null, null) -->
 	anything(Entry).
 
 
-metadata_block(Title, Subtitle, Date) -->
-	metadata(Title, Subtitle, Date),
+metadata_block(Title, Subtitle, Date, Breadcrumb) -->
+	metadata(Title, Subtitle, Date, Breadcrumb),
 	newline,
-	metadata_block(Title, Subtitle, Date).
+	metadata_block(Title, Subtitle, Date, Breadcrumb).
 
-metadata_block(Title, Subtitle, Date) -->
-	metadata(Title, Subtitle, Date).
+metadata_block(Title, Subtitle, Date, Breadcrumb) -->
+	metadata(Title, Subtitle, Date, Breadcrumb).
 
 
-metadata(Title, _, _) -->
+metadata(Title, _, _, _) -->
 	"Title: ",
 	anything(Title).
 
-metadata(_, Subtitle, _) -->
+metadata(_, Subtitle, _, _) -->
 	"Subtitle: ",
 	anything(Subtitle).
 
-metadata(_, _, Date) -->
+metadata(_, _, Date, _) -->
 	"Date: ",
 	anything(Date).
 
-metadata(null, null, null) --> [].
+metadata(_, _, _, Breadcrumb) -->
+	"Breadcrumb: ",
+	anything(Breadcrumb).

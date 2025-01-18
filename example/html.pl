@@ -4,7 +4,7 @@
 %	This is basically your static website's template.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-page(Entry, Title, Subtitle, Date, CleanTitle) -->
+page(Entry, Title, Subtitle, Date, Breadcrumb, CleanTitle) -->
 	doctype,
 	newline,
 	html(Entry, Title, Subtitle, Date, CleanTitle),

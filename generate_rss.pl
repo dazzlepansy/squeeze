@@ -48,7 +48,7 @@ files_to_articles([Filename|Filenames], [article(FormattedDate, FormattedTitle, 
 	% Grab the link.
 	get_link(Filename, Link),
 	% Extract the title, entry, etc. from the HTML.
-	page(Entry, _, _, Date, Title, HTML, []),
+	page(Entry, _, _, Date, _, Title, HTML, []),
 	% Format the date according to RFC 822.
 	format_date(FormattedDate, Date),
 	% XML escape the description.
